@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+  <!-- Define Persistence Unit -->
+  <persistence-unit name="my_persistence_unit">
+    <class>com.apartment_management.pojo.Room</class>
+    <class>com.apartment_management.pojo.Card</class>
+    <class>com.apartment_management.pojo.User</class>
+    <class>com.apartment_management.pojo.DetailInvoice</class>
+    <class>com.apartment_management.pojo.Feed</class>
+    <class>com.apartment_management.pojo.Package</class>
+    <class>com.apartment_management.pojo.Feedback</class>
+    <class>com.apartment_management.pojo.Survey</class>
+    <class>com.apartment_management.pojo.Floor</class>
+    <class>com.apartment_management.pojo.Invoice</class>
+    <class>com.apartment_management.pojo.Locker</class>
+    <class>com.apartment_management.pojo.Response</class>
+    <class>com.apartment_management.pojo.Question</class>
+  </persistence-unit>
+</persistence>
