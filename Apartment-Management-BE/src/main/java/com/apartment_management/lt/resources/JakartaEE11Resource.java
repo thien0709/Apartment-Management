@@ -1,4 +1,4 @@
-package com.hdl.apartment_management.resources;
+package com.apartment_management.lt.resources;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
