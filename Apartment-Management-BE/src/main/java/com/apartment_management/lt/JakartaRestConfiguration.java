@@ -1,4 +1,4 @@
-package com.hdl.apartment_management;
+package com.apartment_management.lt;
 
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
