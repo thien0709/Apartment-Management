@@ -6,13 +6,13 @@ package com.apartment_management.repository.impl;
 
 import com.apartment_management.pojo.User;
 import com.apartment_management.repository.UserRepository;
-import jakarta.data.repository.Repository;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
-import jakarta.transaction.Transactional;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -26,35 +26,62 @@ public class UserRepositoryImpl implements UserRepository {
     private LocalSessionFactoryBean factory;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    private Session getCurrentSession() {
+        return factory.getObject().getCurrentSession();
+    }
 
     @Override
     public User getUserByUsername(String username) {
-        Session session = factory.getObject().getCurrentSession();
+        Query query = getCurrentSession().createQuery("FROM User WHERE username = :username", User.class);
+        query.setParameter("username", username);
+        return (User) query.getSingleResult();
+    }
+
+    @Override
+    public User getUserById(Integer id) {
+        return getCurrentSession().get(User.class, id);
+    }
+
+    @Override
+    public User addUser(User user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        getCurrentSession().save(user);
+        return user;
+    }
+
+    @Override
+    public User authUser(String username, String password) {
+        User user = getUserByUsername(username);
+        if (user != null && bCryptPasswordEncoder.matches(password, user.getPassword())) {
+            return user;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean userExistsByUsername(String username) {
         try {
-            Query q = session.createNamedQuery("User.findByUsername", User.class);
-            q.setParameter("username", username);
-            return (User) q.getSingleResult();
-        } catch (NoResultException ex) {
-            return null;
+            getUserByUsername(username);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
     @Override
-    public User addUser(User u) {
-        Session session = factory.getObject().getCurrentSession();
-        // Encode password trước khi lưu
-        u.setPassword(passwordEncoder.encode(u.getPassword()));
-        session.persist(u);
-        return u;
+    public void changePassword(User user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        getCurrentSession().update(user);
     }
 
     @Override
-    public boolean authenticate(String username, String password) {
-        User u = this.getUserByUsername(username);
-        if (u != null) {
-            return passwordEncoder.matches(password, u.getPassword());
+    public void deleteUser(int id) {
+        User user = getUserById(id);
+        if (user != null) {
+            getCurrentSession().delete(user);
         }
-        return false;
     }
+
 }
