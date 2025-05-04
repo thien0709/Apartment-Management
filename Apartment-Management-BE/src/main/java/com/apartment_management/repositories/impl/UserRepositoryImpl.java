@@ -12,12 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author ADMIN
  */
 @Repository
+@Transactional
 public class UserRepositoryImpl implements UserRepository{
     @Autowired
     private LocalSessionFactoryBean factory;
@@ -29,7 +31,6 @@ public class UserRepositoryImpl implements UserRepository{
         Session s = this.factory.getObject().getCurrentSession();
         Query q = s.createNamedQuery("User.findByUsername", User.class);
         q.setParameter("username", username);
-
         return (User) q.getSingleResult();
 
     }

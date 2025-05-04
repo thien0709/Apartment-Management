@@ -7,14 +7,24 @@ package com.apartment_management.services.impl;
 import com.apartment_management.pojo.User;
 import com.apartment_management.repositories.UserRepository;
 import com.apartment_management.services.UserService;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import java.io.IOException;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -25,6 +35,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepo;
+    @Autowired
+    private Cloudinary cloudinary;
 
     @Override
     public User getUserByUserName(String username) {
@@ -42,6 +54,33 @@ public class UserServiceImpl implements UserService {
         return new org.springframework.security.core.userdetails.User(
                 u.getUsername(), u.getPassword(), authorities);
 
+    }
+
+    @Override
+    public boolean addUser(User user, MultipartFile file) {
+        if (file != null && !file.isEmpty()) {
+            try {
+                Map res = cloudinary.uploader().upload(file.getBytes(),
+                        ObjectUtils.asMap("resource_type", "auto"));
+                user.setAvatarUrl(res.get("secure_url").toString());
+            } catch (IOException ex) {
+                Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
+        }
+
+        // Mã hóa mật khẩu
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        user.setPassword(encoder.encode(user.getPassword()));
+
+        // Thêm thời gian tạo và kích hoạt tài khoản
+        user.setCreatedAt(new Date());
+        user.setIsActive(Boolean.TRUE);
+     
+       
+
+        userRepo.addUser(user);
+        return true;
     }
 
 }

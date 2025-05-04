@@ -6,6 +6,7 @@ package com.apartment_management.services;
 
 import com.apartment_management.pojo.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -13,4 +14,5 @@ import org.springframework.security.core.userdetails.UserDetailsService;
  */
 public interface UserService extends UserDetailsService {
     User getUserByUserName(String username);
+    boolean addUser(User user, MultipartFile file);
 }

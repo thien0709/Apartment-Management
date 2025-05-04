@@ -4,6 +4,8 @@
  */
 package com.apartment_management.configs;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -52,7 +54,7 @@ public class SpringSecurityConfigs {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(requests
                         -> requests
-                        .requestMatchers("/", "/home").authenticated()
+                        .requestMatchers("/", "/home").permitAll()
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
@@ -82,6 +84,16 @@ public class SpringSecurityConfigs {
         source.registerCorsConfiguration("/**", config);
 
         return source;
+    }
+    @Bean
+    public Cloudinary cloudinary() {
+        Cloudinary cloudinary
+                = new Cloudinary(ObjectUtils.asMap(
+                        "cloud_name", "dzwsdpjgi",
+                        "api_key", "693865187219449",
+                        "api_secret", "PtxvcgqYO2dZs7RDWJeNc2DA5Ew",
+                        "secure", true));
+        return cloudinary;
     }
 
 }

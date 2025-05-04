@@ -21,11 +21,13 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -102,7 +104,8 @@ public class User implements Serializable {
     private Room roomId;
     @OneToMany(mappedBy = "userId")
     private Set<Card> cardSet;
-
+    @Transient
+    private MultipartFile file;
     public User() {
     }
 
@@ -276,6 +279,20 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "com.apartment_management.pojo.User[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the file
+     */
+    public MultipartFile getFile() {
+        return file;
+    }
+
+    /**
+     * @param file the file to set
+     */
+    public void setFile(MultipartFile file) {
+        this.file = file;
     }
     
 }

@@ -1,0 +1,58 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Apartment Admin Dashboard</title>
+    <th:block th:replace="base :: bootstrap"></th:block>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+
+    <main class="container mt-4">
+        <h1>Register</h1>
+
+        <form th:action="@{/register}" method="post" enctype="multipart/form-data">
+            <div class="mb-3 mt-3">
+                <label for="username" class="form-label">User name</label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Enter user name"/>
+            </div>
+            <div class="mb-3">
+                <label for="pwd" class="form-label">Password:</label>
+                <input type="password" class="form-control" id="pwd" name="password" placeholder="Enter password"/>
+            </div>
+            <div class="mb-3">
+                <label for="fullname" class="form-label">Full name</label>
+                <input type="text" class="form-control" id="fullname" name="fullName" placeholder="Enter full name"/>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone</label>
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone"/>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="text" class="form-control" id="email" name="email" placeholder="Enter email"/>
+            </div>
+            <div class="mb-3">
+                <label for="avatar" class="form-label">Avatar</label>
+                <input type="file" class="form-control" id="avatar" name="file"/>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Role</label><br />
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="admin" name="role" value="admin"/>
+                    <label class="form-check-label" for="admin">Admin</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="resident" name="role" value="resident"/>
+                    <label class="form-check-label" for="resident">Resident</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add User</button>
+        </form>
+
+
+        <div th:replace="base :: footer"></div>
+        <script th:src="@{/js/main.js}"></script>
+    </main>
+</body>
+</html>
