@@ -43,14 +43,16 @@ public class UserRepositoryImpl implements UserRepository {
 
         return u;
     }
-
+    //đăng nhập ở trang admin
     @Override
     public boolean authenticate(String username, String password) {
         User u = this.getUserByUserName(username);
-
-        return this.passwordEncoder.matches(password, u.getPassword());
+        if(u != null && u.getRole().equals("ADMIN"))
+            return this.passwordEncoder.matches(password, u.getPassword());
+        else 
+            return false;
     }
-
+    //dùng cho api editProfile
     @Override
     public User editProfile(User u) {
         Session s = this.factory.getObject().getCurrentSession();

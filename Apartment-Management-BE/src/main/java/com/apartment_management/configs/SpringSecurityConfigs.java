@@ -61,7 +61,7 @@ public class SpringSecurityConfigs {
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/", true)
-                .failureUrl("/login?error=true")
+                .failureUrl("/login?error")
                 .permitAll()
                 )
                 .logout(logout -> logout

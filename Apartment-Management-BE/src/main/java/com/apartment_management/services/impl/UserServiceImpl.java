@@ -52,11 +52,16 @@ public class UserServiceImpl implements UserService {
         if (u == null) {
             throw new UsernameNotFoundException("Invalid username");
         }
+
+        if (!"ADMIN".equals(u.getRole())) {
+            throw new UsernameNotFoundException("Access denied: not an ADMIN");
+        }
+
         Set<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority(u.getRole()));
+
         return new org.springframework.security.core.userdetails.User(
                 u.getUsername(), u.getPassword(), authorities);
-
     }
 
     @Override
