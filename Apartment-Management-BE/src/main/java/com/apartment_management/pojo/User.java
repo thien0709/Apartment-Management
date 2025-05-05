@@ -4,6 +4,7 @@
  */
 package com.apartment_management.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -63,6 +64,7 @@ public class User implements Serializable {
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "password")
+    @JsonIgnore
     private String password;
     @Size(max = 100)
     @Column(name = "full_name")
@@ -90,19 +92,25 @@ public class User implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    @JsonIgnore
     private Locker locker;
     @OneToMany(mappedBy = "userId")
+    @JsonIgnore
     private Set<Feedback> feedbackSet;
     @OneToMany(mappedBy = "userId")
+    @JsonIgnore
     private Set<Response> responseSet;
     @OneToMany(mappedBy = "adminId")
+    @JsonIgnore
     private Set<Survey> surveySet;
     @OneToMany(mappedBy = "userId")
+    @JsonIgnore
     private Set<Invoice> invoiceSet;
     @JoinColumn(name = "room_id", referencedColumnName = "id")
     @ManyToOne
     private Room roomId;
     @OneToMany(mappedBy = "userId")
+    @JsonIgnore
     private Set<Card> cardSet;
     @Transient
     private MultipartFile file;

@@ -20,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Transactional
-public class UserRepositoryImpl implements UserRepository{
+public class UserRepositoryImpl implements UserRepository {
+
     @Autowired
     private LocalSessionFactoryBean factory;
     @Autowired
@@ -39,7 +40,7 @@ public class UserRepositoryImpl implements UserRepository{
     public User addUser(User u) {
         Session s = this.factory.getObject().getCurrentSession();
         s.persist(u);
-        
+
         return u;
     }
 
@@ -50,5 +51,21 @@ public class UserRepositoryImpl implements UserRepository{
         return this.passwordEncoder.matches(password, u.getPassword());
     }
 
- 
+    @Override
+    public User editProfile(User u) {
+        Session s = this.factory.getObject().getCurrentSession();
+        if (u != null) {
+            s.update(u);
+        }
+        return u;
+    }
+
+    @Override
+    public User getUserById(int id) {
+        Session session = this.factory.getObject().getCurrentSession();
+        Query query = session.createNamedQuery("User.findById", User.class);
+        query.setParameter("id", id);
+        return (User) query.getSingleResult(); 
+    }
+
 }

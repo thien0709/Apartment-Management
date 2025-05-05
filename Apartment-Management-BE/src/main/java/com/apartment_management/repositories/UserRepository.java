@@ -15,7 +15,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository {
     User getUserByUserName(String username);
+    User getUserById(int id);
     User addUser(User u);
     boolean authenticate(String username, String password);
-
+    User editProfile(User user);
 }

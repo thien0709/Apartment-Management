@@ -4,6 +4,7 @@
  */
 package com.apartment_management.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,6 +37,7 @@ public class Locker implements Serializable {
     @Column(name = "id")
     private Integer id;
     @OneToMany(mappedBy = "lockerId")
+    @JsonIgnore
     private Set<Package> packageSet;
     @JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)
     @OneToOne(optional = false)

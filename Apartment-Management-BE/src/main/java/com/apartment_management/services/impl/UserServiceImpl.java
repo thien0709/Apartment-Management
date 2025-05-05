@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,6 +38,8 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepo;
     @Autowired
     private Cloudinary cloudinary;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public User getUserByUserName(String username) {
@@ -76,11 +79,44 @@ public class UserServiceImpl implements UserService {
         // Thêm thời gian tạo và kích hoạt tài khoản
         user.setCreatedAt(new Date());
         user.setIsActive(Boolean.TRUE);
-     
-       
-
         userRepo.addUser(user);
         return true;
+    }
+
+    @Override
+    public User editProfile(int id, User updated) {
+        User existing = userRepo.getUserById(id);
+        if (existing == null) {
+            return null;
+        }
+
+        if (updated.getUsername() != null) {
+            existing.setUsername(updated.getUsername());
+        }
+        if (updated.getFullName() != null) {
+            existing.setFullName(updated.getFullName());
+        }
+        if (updated.getEmail() != null) {
+            existing.setEmail(updated.getEmail());
+        }
+        if (updated.getPhone() != null) {
+            existing.setPhone(updated.getPhone());
+        }
+        if (updated.getRole() != null) {
+            existing.setRole(updated.getRole());
+        }
+
+        MultipartFile file = updated.getFile();
+        if (file != null && !file.isEmpty()) {
+            try {
+                Map res = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+                existing.setAvatarUrl(res.get("secure_url").toString());
+            } catch (IOException ex) {
+                Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return userRepo.editProfile(existing);
     }
 
 }
