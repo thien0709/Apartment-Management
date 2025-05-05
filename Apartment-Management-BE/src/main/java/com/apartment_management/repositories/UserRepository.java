@@ -18,5 +18,6 @@ public interface UserRepository {
     User getUserById(int id);
     User addUser(User u);
     boolean authenticate(String username, String password);
+    User authenticateForClient(String username, String password);
     User editProfile(User user);
 }

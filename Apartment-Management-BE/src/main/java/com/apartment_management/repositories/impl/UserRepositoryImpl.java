@@ -43,15 +43,32 @@ public class UserRepositoryImpl implements UserRepository {
 
         return u;
     }
+
     //đăng nhập ở trang admin
     @Override
     public boolean authenticate(String username, String password) {
         User u = this.getUserByUserName(username);
-        if(u != null && u.getRole().equals("ADMIN"))
+        if (u != null && u.getRole().equals("ADMIN")) {
             return this.passwordEncoder.matches(password, u.getPassword());
-        else 
+        } else {
             return false;
+        }
     }
+
+    @Override
+    public User authenticateForClient(String username, String password) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("User.findByUsername", User.class);
+        q.setParameter("username", username);
+        User u = (User) q.getSingleResult();
+
+        if (u != null && u.getRole().equals("RESIDENT") && this.passwordEncoder.matches(password, u.getPassword())) {
+            return u;
+        } else {
+            return null; // Nếu đăng nhập thất bại, trả về null
+        }
+    }
+
     //dùng cho api editProfile
     @Override
     public User editProfile(User u) {
@@ -67,7 +84,7 @@ public class UserRepositoryImpl implements UserRepository {
         Session session = this.factory.getObject().getCurrentSession();
         Query query = session.createNamedQuery("User.findById", User.class);
         query.setParameter("id", id);
-        return (User) query.getSingleResult(); 
+        return (User) query.getSingleResult();
     }
 
 }

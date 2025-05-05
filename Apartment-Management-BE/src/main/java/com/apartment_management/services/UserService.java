@@ -18,4 +18,5 @@ public interface UserService extends UserDetailsService {
     User getUserByUserName(String username);
     boolean addUser(User user, MultipartFile file);
     User editProfile(int id, User user);
+    User authenticateForClient(String username, String password);
 }

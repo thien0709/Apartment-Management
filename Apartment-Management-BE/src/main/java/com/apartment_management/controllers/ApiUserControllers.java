@@ -35,10 +35,23 @@ public class ApiUserControllers {
     @PutMapping(path = "/users/{id}", consumes = MediaType.MULTIPART_FORM_DATA)
     public ResponseEntity<User> editProfile(
             @PathVariable("id") int id,
-            @ModelAttribute User user) { 
+            @ModelAttribute User user) {
 
         User updatedUser = userService.editProfile(id, user);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<User> login(
+            @RequestParam("username") String username,
+            @RequestParam("password") String password) {
+
+        User authenticatedUser = userService.authenticateForClient(username, password);
+        if (authenticatedUser != null) {
+            return ResponseEntity.ok(authenticatedUser); // Trả về user nếu đăng nhập thành công
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null); // Trả về lỗi nếu đăng nhập thất bại
+        }
     }
 
 }

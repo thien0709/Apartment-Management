@@ -124,4 +124,9 @@ public class UserServiceImpl implements UserService {
         return userRepo.editProfile(existing);
     }
 
+    @Override
+    public User authenticateForClient(String username, String password) {
+        return userRepo.authenticateForClient(username, password);
+    }
+
 }
