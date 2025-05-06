@@ -4,19 +4,15 @@
  */
 package com.apartment_management.repository;
 
-import com.apartment_management.pojo.Card;
-import java.util.List;
+import com.apartment_management.pojo.Locker;
+import com.apartment_management.pojo.User;
 
 /**
  *
  * @author thien
  */
-public interface CardRepository {
-   Card createCard(Card card);
-
-    List<Card> getCardsByUser(Integer userId);
-
-    Card updateCard(Long id, Card card);
-
-    void deactivateCard(Integer cardId);
+public interface LockerRepository {
+    void createLocker(User u);
+    Locker getLockerById(int userId);
+    void deleteLocker(int userId);
 }

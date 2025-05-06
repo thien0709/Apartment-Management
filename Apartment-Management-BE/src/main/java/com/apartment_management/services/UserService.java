@@ -17,11 +17,11 @@ public interface UserService extends UserDetailsService {
 
     User getUserByUsername(String username);
 
-    User addUser(User user);
+    User addUser(Map<String, String> params, MultipartFile avatar);
 
     User authUser(String username, String password);
 
-    void changePassword();
+    void changePassword (String username, String oldPassword, String newPassword);
 
     User addAdmin(User user);
 

@@ -46,8 +46,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User addUser(User user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        getCurrentSession().save(user);
+       getCurrentSession().persist(user);
         return user;
     }
 
@@ -72,15 +71,14 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void changePassword(User user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        getCurrentSession().update(user);
+          getCurrentSession().merge(user);
     }
 
     @Override
     public void deleteUser(int id) {
         User user = getUserById(id);
         if (user != null) {
-            getCurrentSession().delete(user);
+            getCurrentSession().remove(user);
         }
     }
 
