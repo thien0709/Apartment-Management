@@ -3,20 +3,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
 package com.apartment_management.repository;
-
-import com.apartment_management.pojo.Card;
+import com.apartment_management.pojo.Package;
 import java.util.List;
 
 /**
  *
  * @author thien
  */
-public interface CardRepository {
-   Card createCard(Card card);
-
-    List<Card> getCardsByUser(Integer userId);
-
-    Card updateCard(Long id, Card card);
-
-    void deactivateCard(Integer cardId);
+public interface PackageRepository {
+    void createPackage(String name, int userId);
+    List<Package> findByUserId(int userId);
+    List<Package> findByUserIdAndStatus(int userId,String status);
+    List<Package> findByStatus(String status);
 }
