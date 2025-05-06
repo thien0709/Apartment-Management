@@ -67,4 +67,10 @@ public class FeedBackServiceImpl implements FeedBackService {
         }
         return null;
     }
+
+    @Override
+    public void deleteFeedback(int feedbackId) {
+        Feedback f  = this.feedBackRepo.getFeedBackById(feedbackId);
+        return this.feedBackRepo.deleteFeedback(f);
+    }
 }

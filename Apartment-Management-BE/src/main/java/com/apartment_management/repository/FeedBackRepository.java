@@ -21,8 +21,10 @@ public interface FeedBackRepository {
     Feedback getFeedBackById(int feedbackId);
 
     Feedback createFeedback(Feedback feedback);
-      Feedback updateFeedback(Feedback feedback);
+
+    Feedback updateFeedback(Feedback feedback);
 
     Feedback updateFeedbackStatus(Feedback feedback);
-
+    
+    void deleteFeedback (Feedback feedback);
 }

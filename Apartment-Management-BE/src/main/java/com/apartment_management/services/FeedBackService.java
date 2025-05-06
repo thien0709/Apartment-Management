@@ -22,4 +22,6 @@ public interface FeedBackService {
     Feedback updateFeedback(int feedbackId, String content);
 
     Feedback updateFeedbackStatus(int feedbackId, String status);
+
+    void deleteFeedback(int feedbackId);
 }
