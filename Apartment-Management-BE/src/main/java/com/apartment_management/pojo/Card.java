@@ -4,6 +4,8 @@
  */
 package com.apartment_management.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,9 +48,11 @@ public class Card implements Serializable {
     @Size(max = 100)
     @Column(name = "holder_name")
     private String holderName;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "issue_date")
     @Temporal(TemporalType.DATE)
     private Date issueDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "expiration_date")
     @Temporal(TemporalType.DATE)
     private Date expirationDate;
@@ -60,6 +64,7 @@ public class Card implements Serializable {
     private String status;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne
+    @JsonIgnore
     private User userId;
 
     public Card() {

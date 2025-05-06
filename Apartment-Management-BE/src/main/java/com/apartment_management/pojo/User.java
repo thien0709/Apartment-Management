@@ -112,6 +112,7 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "userId")
     @JsonIgnore
     private Set<Card> cardSet;
+    @JsonIgnore
     @Transient
     private MultipartFile file;
     public User() {
