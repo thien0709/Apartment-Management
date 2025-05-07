@@ -1,3 +1,8 @@
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.apartment_management.configs;
 
 import com.cloudinary.Cloudinary;
@@ -7,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,6 +32,8 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 /**
  *
  * @author thien
+=======
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
  */
 @Configuration
 @EnableWebSecurity
@@ -43,6 +48,7 @@ public class SpringSecurityConfigs {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    private UserDetailsService userDetailsService;
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -72,16 +78,6 @@ public class SpringSecurityConfigs {
         return new HandlerMappingIntrospector();
     }
 
-    @Bean
-    public Cloudinary cloudinary() {
-        Cloudinary cloudinary
-                = new Cloudinary(ObjectUtils.asMap(
-                        "cloud_name", "dxxwcby8l",
-                        "api_key", "448651448423589",
-                        "api_secret", "ftGud0r1TTqp0CGp5tjwNmkAm-A",
-                        "secure", true));
-        return cloudinary;
-    }
 
     @Bean
     @Order(0)
@@ -99,10 +95,35 @@ public class SpringSecurityConfigs {
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));
         config.setAllowCredentials(true); 
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return source;
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(requests
+                        -> requests
+                        .requestMatchers("/", "/home").permitAll()
+                        .anyRequest().permitAll()
+                )
+                .formLogin(form -> form
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/", true)
+                .failureUrl("/login?error")
+                .permitAll()
+                )
+                .logout(logout -> logout
+                .logoutSuccessUrl("/login")
+                .permitAll()
+                );
+        return http.build();
+    }
+    @Bean
+    public Cloudinary cloudinary() {
+        Cloudinary cloudinary
+                = new Cloudinary(ObjectUtils.asMap(
+                        "cloud_name", "dzwsdpjgi",
+                        "api_key", "693865187219449",
+                        "api_secret", "PtxvcgqYO2dZs7RDWJeNc2DA5Ew",
+                        "secure", true));
+        return cloudinary;
     }
 }

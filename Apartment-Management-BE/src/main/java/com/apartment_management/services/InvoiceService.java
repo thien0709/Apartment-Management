@@ -4,15 +4,14 @@
  */
 package com.apartment_management.services;
 
-import com.apartment_management.pojo.Card;
+import com.apartment_management.pojo.Invoice;
 import java.util.List;
 
 /**
  *
- * @author thien
+ * @author ADMIN
  */
-public interface CardService {
-    Card addCard(Card card);
-    List<Card> getCardsByUserId(int userId);
-    boolean deleteCard(int cardId);
+public interface InvoiceService {
+    List<Invoice> getInvoicesByUserId(int userId);
+    
 }
