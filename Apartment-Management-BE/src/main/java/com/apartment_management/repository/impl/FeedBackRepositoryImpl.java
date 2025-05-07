@@ -62,6 +62,11 @@ public class FeedBackRepositoryImpl implements FeedBackRepository {
     @Override
     public Feedback updateFeedback(Feedback feedback) {
         return this.getCurrentSession().merge(feedback);
-     }
+    }
+
+    @Override
+    public void deleteFeedback(Feedback feedback) {
+        this.getCurrentSession().remove(feedback);
+    }
 
 }
