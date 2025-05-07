@@ -4,15 +4,17 @@
  */
 package com.apartment_management.services;
 
-import com.apartment_management.pojo.Card;
+import com.apartment_management.pojo.Response;
 import java.util.List;
 
 /**
  *
  * @author thien
  */
-public interface CardService {
-    Card addCard(Card card);
-    List<Card> getCardsByUserId(int userId);
-    boolean deleteCard(int cardId);
+public interface ResponseService {
+
+    void submitResponse(String answer, int questionId, int userId);
+
+    List<Response> getResponses(Integer surveyId, Integer questionId, Integer userId);
+
 }

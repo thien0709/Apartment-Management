@@ -4,15 +4,14 @@
  */
 package com.apartment_management.services;
 
-import com.apartment_management.pojo.Card;
-import java.util.List;
+import com.apartment_management.pojo.Locker;
 
 /**
  *
  * @author thien
  */
-public interface CardService {
-    Card addCard(Card card);
-    List<Card> getCardsByUserId(int userId);
-    boolean deleteCard(int cardId);
+public interface LockerService {
+    void creatLocker(int userId);
+    Locker getLockerById(int userId);
+    void deleteLocker(int userId);
 }

@@ -3,16 +3,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
 package com.apartment_management.services;
-
-import com.apartment_management.pojo.Card;
+import com.apartment_management.pojo.Package;
 import java.util.List;
 
 /**
  *
  * @author thien
  */
-public interface CardService {
-    Card addCard(Card card);
-    List<Card> getCardsByUserId(int userId);
-    boolean deleteCard(int cardId);
+public interface PackageService {
+
+    void createPackage(String name, int userId);
+
+    List<Package> findByUserId(int userId);
+
+    List<Package> findByUserIdAndStatus(int userId, String status);
+
+    List<Package> findByStatus(String status);
 }
