@@ -40,7 +40,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @EnableTransactionManagement
 @ComponentScan(basePackages = {
     "com.apartment_management.controllers",
-    "com.apartment_management.repository",
+    "com.apartment_management.repositories",
     "com.apartment_management.services"
 })
 public class SpringSecurityConfigs {
@@ -48,29 +48,9 @@ public class SpringSecurityConfigs {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    private UserDetailsService userDetailsService;
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
-            Exception {
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(c -> c.disable()).authorizeHttpRequests(requests
-                -> requests.requestMatchers("/", "/home").permitAll()
-                        .requestMatchers("/api/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/products").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET,
-                                "/products/**").hasAnyRole("USER", "ADMIN")
-                        .anyRequest().authenticated())
-                .formLogin(form -> form.loginPage("/login")
-                .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/", true)
-                .failureUrl("/login?error=true").permitAll())
-                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
-        return http.build();
     }
 
     @Bean
@@ -80,7 +60,6 @@ public class SpringSecurityConfigs {
 
 
     @Bean
-    @Order(0)
     public StandardServletMultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
     }
@@ -90,11 +69,18 @@ public class SpringSecurityConfigs {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:3000/")); 
+        config.setAllowedOrigins(List.of("http://localhost:8080")); 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));
         config.setAllowCredentials(true); 
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())

@@ -5,7 +5,7 @@
 package com.apartment_management.services.impl;
 
 import com.apartment_management.pojo.Package;
-import com.apartment_management.repository.PackageRepository;
+import com.apartment_management.repositories.PackageRepository;
 import com.apartment_management.services.PackageService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

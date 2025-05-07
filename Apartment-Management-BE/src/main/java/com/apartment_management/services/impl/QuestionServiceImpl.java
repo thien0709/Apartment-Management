@@ -6,8 +6,8 @@ package com.apartment_management.services.impl;
 
 import com.apartment_management.pojo.Question;
 import com.apartment_management.pojo.Survey;
-import com.apartment_management.repository.QuestionRepository;
-import com.apartment_management.repository.SurveyRepository;
+import com.apartment_management.repositories.QuestionRepository;
+import com.apartment_management.repositories.SurveyRepository;
 import com.apartment_management.services.QuestionService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

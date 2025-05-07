@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
  *
  * @author ADMIN
  */
-@Repository
 public interface UserRepository {
     User getUserByUserName(String username);
     User getUserById(int id);
