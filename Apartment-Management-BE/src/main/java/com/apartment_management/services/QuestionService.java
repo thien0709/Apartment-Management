@@ -4,10 +4,22 @@
  */
 package com.apartment_management.services;
 
+import com.apartment_management.pojo.Question;
+import java.util.List;
+
 /**
  *
  * @author thien
  */
 public interface QuestionService {
-    
+
+    List<Question> getQuestionsBySurveyId(int surveyId);
+
+    Question getQuestionById(int id);
+
+    void addQuestionToSurvey(Question question);
+
+    void updateQuestion(Question question);
+
+    void deleteQuestion(int id);
 }
