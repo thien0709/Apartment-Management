@@ -7,6 +7,13 @@ package com.apartment_management.repositories.impl;
 import com.apartment_management.pojo.User;
 import com.apartment_management.repositories.UserRepository;
 import jakarta.persistence.Query;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -85,6 +92,45 @@ public class UserRepositoryImpl implements UserRepository {
         Query query = session.createNamedQuery("User.findById", User.class);
         query.setParameter("id", id);
         return (User) query.getSingleResult();
+    }
+
+    @Override
+    public List<User> getUsers(Map<String, String> params) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<User> q = b.createQuery(User.class);
+        Root root = q.from(User.class);
+        q.select(root);
+
+        if (params != null) {
+            List<Predicate> predicates = new ArrayList<>();
+
+            String kw = params.get("kw");
+            if (kw != null && !kw.isEmpty()) {
+                predicates.add(b.like(root.get("username"), String.format("%%%s%%", kw)));
+            }
+            q.where(predicates.toArray(Predicate[]::new));
+
+            String orderBy = params.get("orderBy");
+            if (orderBy != null && !orderBy.isEmpty()) {
+                q.orderBy(b.asc(root.get(orderBy)));
+            }
+        }
+
+        Query query = s.createQuery(q);
+        return query.getResultList();
+
+    }
+
+    @Override
+    public boolean deleteUser(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        User user = s.get(User.class, id);
+        if (user != null) {
+            s.remove(user);
+            return true;
+        }
+        return false;
     }
 
 }

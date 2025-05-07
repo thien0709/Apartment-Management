@@ -1,0 +1,58 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Manage Users</title>
+    <th:block th:replace="base :: bootstrap"></th:block>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+
+    <main class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <!-- Thanh tìm kiếm -->
+            <form th:action="@{/manage-user}" method="get" class="d-flex">
+                <input type="text" name="kw" class="form-control me-2" th:value="${params['kw']}" placeholder="Tìm kiếm người dùng...">
+                <button type="submit" class="btn btn-outline-primary">Tìm</button>
+            </form>
+
+            <!-- Nút thêm user -->
+            <a th:href="@{/register}" class="btn btn-success">+ Thêm người dùng</a>
+        </div>
+
+        <!-- Bảng hiển thị danh sách người dùng -->
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th class="text-center">ID</th>
+                    <th class="text-center">Tên</th>
+                    <th class="text-center">Email</th>
+                    <th class="text-center">Điện thoại</th>
+                    <th class="text-center">Vai trò</th>
+                    <th class="text-center">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.fullName}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${user.phone}"></td>
+                    <td th:text="${user.role}"></td>
+                    <td>
+                        <form th:action="@{/users/delete/{id}(id=${user.id})}" method="post" th:onsubmit="return confirm('Bạn có chắc chắn muốn xóa người dùng này?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(users)}">
+                    <td colspan="5" class="text-center text-muted">Không có người dùng nào.</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+    <div th:replace="base :: footer"></div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
+

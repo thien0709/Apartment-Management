@@ -12,8 +12,8 @@ import com.cloudinary.utils.ObjectUtils;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,7 +24,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -127,6 +126,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public User authenticateForClient(String username, String password) {
         return userRepo.authenticateForClient(username, password);
+    }
+
+    @Override
+    public List<User> getUsers(Map<String, String> params) {
+        return userRepo.getUsers(params);
+    }
+
+    @Override
+    public boolean deleteUser(int id) {
+        return userRepo.deleteUser(id);
     }
 
 }

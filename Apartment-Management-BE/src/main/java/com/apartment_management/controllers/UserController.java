@@ -10,10 +10,13 @@ import org.springframework.ui.Model;
 import com.apartment_management.pojo.User;
 import com.apartment_management.services.UserService;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,9 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Controller
 public class UserController {
-      @Autowired
-    UserService userSer;
 
+    @Autowired
+    UserService userSer;
 
     @GetMapping("/login")
     public String loginView() {
@@ -59,5 +62,21 @@ public class UserController {
         user.setFile(file);
         userSer.addUser(user, file);
         return "redirect:/login";
+    }
+
+    @GetMapping("/manage-user")
+    public String manageUserView(@RequestParam Map<String, String> params, Model model) {
+        List<User> users = userSer.getUsers(params);
+        model.addAttribute("users", users);
+        model.addAttribute("params", params);
+        return "manage_user";
+    }
+
+    @PostMapping("/users/delete/{id}")
+    public String deleteUser(@PathVariable("id") int id) {
+        boolean temp = userSer.deleteUser(id);
+        if (temp == true)
+            return "redirect:/manage-user";  // quay lại trang quản lý
+        return "Không thể xóa";
     }
 }
