@@ -4,10 +4,16 @@
  */
 package com.apartment_management.repository;
 
+import com.apartment_management.pojo.Response;
+import java.util.List;
+
 /**
  *
  * @author thien
  */
-public interface ReponseRepository {
-    
+public interface ResponseRepository {
+
+    void submitResponse(Response response);
+
+    List<Response> getResponses(Integer surveyId, Integer questionId, Integer userId);
 }
