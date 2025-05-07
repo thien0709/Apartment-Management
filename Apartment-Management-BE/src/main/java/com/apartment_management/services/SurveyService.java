@@ -4,10 +4,22 @@
  */
 package com.apartment_management.services;
 
+import com.apartment_management.pojo.Survey;
+import java.util.List;
+
 /**
  *
  * @author thien
  */
 public interface SurveyService {
-    
+
+    List<Survey> getAllSurveys();
+
+    Survey getSurveyById(int id);
+
+    void createSurvey();
+
+    void updateSurvey(Survey survey);
+
+    void deleteSurvey(int id);
 }

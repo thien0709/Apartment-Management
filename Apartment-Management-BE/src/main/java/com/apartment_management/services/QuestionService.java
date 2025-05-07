@@ -17,9 +17,9 @@ public interface QuestionService {
 
     Question getQuestionById(int id);
 
-    void addQuestionToSurvey(Question question);
+    void addQuestion(String content, int surveyId);
 
-    void updateQuestion(Question question);
+    void updateQuestion(int questionId, String content);
 
     void deleteQuestion(int id);
 }

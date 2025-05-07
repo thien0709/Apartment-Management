@@ -4,10 +4,59 @@
  */
 package com.apartment_management.services.impl;
 
+import com.apartment_management.pojo.Question;
+import com.apartment_management.pojo.Survey;
+import com.apartment_management.repository.QuestionRepository;
+import com.apartment_management.repository.SurveyRepository;
+import com.apartment_management.services.QuestionService;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 /**
  *
  * @author thien
  */
-public class QuestionServiceImpl {
+@Service
+public class QuestionServiceImpl implements QuestionService {
+    
+    @Autowired
+    private QuestionRepository questionRepo;
+    
+    @Autowired
+    private SurveyRepository surveyRepo;
+    
+    @Override
+    public List<Question> getQuestionsBySurveyId(int surveyId) {
+        return this.questionRepo.getQuestionsBySurveyId(surveyId);
+    }
+    
+    @Override
+    public Question getQuestionById(int id) {
+        return this.questionRepo.getQuestionById(id);
+    }
+    
+    @Override
+    public void addQuestion(String content, int surveyId) {
+        Survey s = this.surveyRepo.getSurveyById(surveyId);
+        Question q = new Question();
+        q.setContent(content);
+        q.setSurveyId(s);
+        this.questionRepo.addQuestion(q);
+    }
+    
+    @Override
+    public void updateQuestion(int questionId, String content) {
+        Question existing = this.questionRepo.getQuestionById(questionId);
+        if (existing != null) {
+            existing.setContent(content);
+            this.questionRepo.updateQuestion(existing);
+        }
+    }
+    
+    @Override
+    public void deleteQuestion(int id) {
+        this.questionRepo.deleteQuestion(id);
+    }
     
 }

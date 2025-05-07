@@ -12,8 +12,9 @@ import java.util.List;
  * @author thien
  */
 public interface ResponseService {
-      void submitResponse(Response response);
-    List<Response> getResponsesBySurveyId(int surveyId);
-    List<Response> getResponsesByQuestionId(int questionId);
-    List<Response> getResponsesByUserId(int userId);
+
+    void submitResponse(String answer, int questionId, int userId);
+
+    List<Response> getResponses(Integer surveyId, Integer questionId, Integer userId);
+
 }

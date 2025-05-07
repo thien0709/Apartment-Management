@@ -15,9 +15,5 @@ public interface ResponseRepository {
 
     void submitResponse(Response response);
 
-    List<Response> getResponsesBySurveyId(int surveyId);
-
-    List<Response> getResponsesByQuestionId(int questionId);
-
-    List<Response> getResponsesByUserId(int userId);
+    List<Response> getResponses(Integer surveyId, Integer questionId, Integer userId);
 }
