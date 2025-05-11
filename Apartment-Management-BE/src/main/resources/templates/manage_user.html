@@ -13,7 +13,10 @@
             <form th:action="@{/manage-user}" method="get" class="d-flex">
                 <input type="text" name="kw" class="form-control me-2" th:value="${params['kw']}" placeholder="Tìm kiếm người dùng...">
                 <button type="submit" class="btn btn-outline-primary">Tìm</button>
+                <input type="text" name="room_number" class="form-control me-2" th:value="${params['room_number']}" placeholder="Số phòng">
+                <button type="submit" class="btn btn-outline-primary">Tìm</button>
             </form>
+            
 
             <!-- Nút thêm user -->
             <a th:href="@{/register}" class="btn btn-success">+ Thêm người dùng</a>
@@ -28,6 +31,7 @@
                     <th class="text-center">Email</th>
                     <th class="text-center">Điện thoại</th>
                     <th class="text-center">Vai trò</th>
+                    <th class="text-center">Số phòng</th>
                     <th class="text-center">Hành động</th>
                 </tr>
             </thead>
@@ -38,6 +42,7 @@
                     <td th:text="${user.email}"></td>
                     <td th:text="${user.phone}"></td>
                     <td th:text="${user.role}"></td>
+                    <td th:text="${user.roomId != null ? user.roomId.roomNumber : 'Chưa phân phòng'}"></td>
                     <td>
                         <form th:action="@{/users/delete/{id}(id=${user.id})}" method="post" th:onsubmit="return confirm('Bạn có chắc chắn muốn xóa người dùng này?');">
                             <button type="submit" class="btn btn-danger btn-sm">Xóa</button>

@@ -109,6 +109,10 @@ public class UserRepositoryImpl implements UserRepository {
             if (kw != null && !kw.isEmpty()) {
                 predicates.add(b.like(root.get("username"), String.format("%%%s%%", kw)));
             }
+            String roomNumber = params.get("room_number");
+            if (roomNumber != null && !roomNumber.isEmpty()) {
+                predicates.add(b.like(root.get("roomId").get("roomNumber"), String.format("%%%s%%", kw)));
+            }
             q.where(predicates.toArray(Predicate[]::new));
 
             String orderBy = params.get("orderBy");
