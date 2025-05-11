@@ -4,6 +4,7 @@
  */
 package com.apartment_management.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -51,8 +52,10 @@ public class Room implements Serializable {
     private int maxPeople;
     @JoinColumn(name = "floor_id", referencedColumnName = "id")
     @ManyToOne
+    @JsonIgnore
     private Floor floorId;
     @OneToMany(mappedBy = "roomId")
+    @JsonIgnore
     private Set<User> userSet;
 
     public Room() {
