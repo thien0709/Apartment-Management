@@ -5,6 +5,7 @@
 package com.apartment_management.repositories;
 import com.apartment_management.pojo.Locker;
 import com.apartment_management.pojo.User;
+import java.util.List;
 
 /**
  *
@@ -14,4 +15,6 @@ public interface LockerRepository {
     void createLocker(User u);
     Locker getLockerById(int userId);
     void deleteLocker(int userId);
+    List<Locker> findAllLockers();
+    boolean existsById(int userId);
 }

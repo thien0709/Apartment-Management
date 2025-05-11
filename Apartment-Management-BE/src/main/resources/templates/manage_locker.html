@@ -1,0 +1,162 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <title>Quản lý tủ đồ cư dân</title>
+
+    <!-- Bootstrap CSS & JS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        .resident-card {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .resident-card:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<header th:replace="base :: header"></header>
+
+<main class="container my-4">
+    <h1 class="mb-4">Quản lý tủ đồ cư dân</h1>
+
+    <!-- Hiển thị thông báo -->
+    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+        <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <!-- Form thêm gói hàng -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="card-title h5">Thêm gói hàng mới</h2>
+            <form th:action="@{/receive-package/add-package}" method="post">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="residentId" class="form-label">Chọn cư dân</label>
+                        <select id="residentId" name="residentId" class="form-select" required>
+                            <option value="">Chọn cư dân</option>
+                            <option th:each="resident : ${residents}"
+                                    th:value="${resident.id}"
+                                    th:text="${resident.fullName} + ' (' + ${resident.username} + ')'">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="packageName" class="form-label">Tên gói hàng</label>
+                        <input type="text" id="packageName" name="packageName" class="form-control" placeholder="Nhập tên gói hàng" required>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Thêm gói hàng</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Grid hiển thị cư dân -->
+    <div class="mb-4">
+        <h2 class="h5 mb-3">Danh sách cư dân</h2>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            <div class="col" th:each="resident : ${residents}">
+                <a th:href="@{/receive-package/packages/{userId}(userId=${resident.id})}" class="text-decoration-none">
+                    <div class="card resident-card">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${resident.fullName}"></h5>
+                            <p class="card-text">
+                                Username: <span th:text="${resident.username}"></span><br>
+                                Email: <span th:text="${resident.email} ?: 'N/A'"></span><br>
+                                Phòng: <span th:text="${resident.roomId?.roomNumber} ?: 'N/A'"></span>
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Danh sách gói hàng của cư dân được chọn -->
+    <div class="card" th:if="${selectedResident}">
+        <div class="card-body">
+            <h2 class="card-title h5 mb-3">Gói hàng của <span th:text="${selectedResident.fullName}"></span></h2>
+            <form th:action="@{/receive-package/packages/{userId}(userId=${selectedResident.id})}" method="get" class="mb-3">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="status" class="form-label">Lọc theo trạng thái</label>
+                        <select id="status" name="status" class="form-select" onchange="this.form.submit()">
+                            <option value="" th:selected="${selectedStatus == null}">Tất cả</option>
+                            <option value="Chờ nhận" th:selected="${selectedStatus == 'Chờ nhận'}">Chờ nhận</option>
+                            <option value="Đã nhận" th:selected="${selectedStatus == 'Đã nhận'}">Đã nhận</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Tên gói hàng</th>
+                        <th scope="col">Trạng thái</th>
+                        <th scope="col">Ngày tạo</th>
+                        <th scope="col">Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="pkg : ${packages}">
+                        <td th:text="${pkg.id}"></td>
+                        <td th:text="${pkg.name}"></td>
+                        <td th:text="${pkg.status}"></td>
+                        <td th:text="${#dates.format(pkg.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td>
+                            <form th:action="@{/receive-package/packages/{packageId}/update-status(packageId=${pkg.id})}" method="post" class="d-inline">
+                                <input type="hidden" name="userId" th:value="${selectedResident.id}">
+                                <select name="status" onchange="this.form.submit()">
+                                    <option value="Chờ nhận" th:selected="${pkg.status == 'PENDING'}">Chờ nhận</option>
+                                    <option value="Đã nhận" th:selected="${pkg.status == 'RECEIVED'}">Đã nhận</option>
+                                </select>
+                            </form>
+                            <form th:action="@{/receive-package/packages/{packageId}/delete(packageId=${pkg.id})}" method="post" class="d-inline">
+                                <input type="hidden" name="userId" th:value="${selectedResident.id}">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa gói hàng này?')">Xóa</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${packages.isEmpty}">
+                        <td colspan="5" class="text-center">Không có gói hàng nào.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer th:replace="base :: footer"></footer>
+</body>
+</html>

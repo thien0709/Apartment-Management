@@ -5,6 +5,7 @@
 package com.apartment_management.services;
 
 import com.apartment_management.pojo.Locker;
+import java.util.List;
 
 /**
  *
@@ -14,4 +15,5 @@ public interface LockerService {
     void creatLocker(int userId);
     Locker getLockerById(int userId);
     void deleteLocker(int userId);
+    List<Locker> findAllLockers();
 }

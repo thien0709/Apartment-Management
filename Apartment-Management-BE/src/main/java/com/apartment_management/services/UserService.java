@@ -21,5 +21,6 @@ public interface UserService extends UserDetailsService {
     User authenticateForClient(String username, String password);
     List<User> getUsers(Map<String, String> params);
     boolean deleteUser(int id);
+    User getUserById(int id);
 
 }

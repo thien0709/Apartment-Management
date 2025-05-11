@@ -137,4 +137,13 @@ public class UserRepositoryImpl implements UserRepository {
         return false;
     }
 
+    @Override
+    public List<User> findByRole(String role) {
+        Session session = this.factory.getObject().getCurrentSession();
+        String hql = "FROM User u WHERE u.role = :role";
+        Query query = session.createQuery(hql); // Không dùng <User>
+        query.setParameter("role", role);
+        return query.getResultList(); // Phải ép kiểu nếu cần danh sách User
+    }
+
 }
