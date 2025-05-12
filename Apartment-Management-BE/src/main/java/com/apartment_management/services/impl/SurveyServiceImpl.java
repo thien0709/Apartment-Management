@@ -5,8 +5,11 @@
 package com.apartment_management.services.impl;
 
 import com.apartment_management.pojo.Survey;
+import com.apartment_management.repositories.SurveyRepository;
+import com.apartment_management.repositories.UserRepository;
 import com.apartment_management.services.SurveyService;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,21 +17,28 @@ import org.springframework.stereotype.Service;
  * @author thien
  */
 @Service
-public class SurveyServiceImpl implements SurveyService{
+public class SurveyServiceImpl implements SurveyService {
 
+    @Autowired
+    private SurveyRepository surveyRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+    
     @Override
     public List<Survey> getAllSurveys() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return surveyRepository.getAllSurveys();
     }
 
     @Override
     public Survey getSurveyById(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return surveyRepository.getSurveyById(id);
     }
 
     @Override
     public void createSurvey() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Survey s = new Survey();
+        thisurveyRepository.createSurvey(s);
     }
 
     @Override
@@ -40,5 +50,5 @@ public class SurveyServiceImpl implements SurveyService{
     public void deleteSurvey(int id) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
 }

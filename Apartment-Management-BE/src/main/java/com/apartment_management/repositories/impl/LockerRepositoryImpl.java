@@ -2,11 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.apartment_management.repository.impl;
+package com.apartment_management.repositories.impl;
 
 import com.apartment_management.pojo.Locker;
 import com.apartment_management.pojo.User;
-import com.apartment_management.repository.LockerRepository;
+import com.apartment_management.repositories.LockerRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;

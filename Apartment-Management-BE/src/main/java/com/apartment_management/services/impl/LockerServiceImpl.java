@@ -6,8 +6,8 @@ package com.apartment_management.services.impl;
 
 import com.apartment_management.pojo.Locker;
 import com.apartment_management.pojo.User;
-import com.apartment_management.repository.LockerRepository;
-import com.apartment_management.repository.UserRepository;
+import com.apartment_management.repositories.LockerRepository;
+import com.apartment_management.repositories.UserRepository;
 import com.apartment_management.services.LockerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
