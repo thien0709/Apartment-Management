@@ -1,4 +1,3 @@
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -28,49 +27,27 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 /**
  *
- * @author thien
-=======
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+ * @author thien ======= import
+ * org.springframework.web.servlet.handler.HandlerMappingIntrospector;
  */
 @Configuration
 @EnableWebSecurity
 @EnableTransactionManagement
 @ComponentScan(basePackages = {
     "com.apartment_management.controllers",
-    "com.apartment_management.repository",
+    "com.apartment_management.repositories",
     "com.apartment_management.services"
 })
 public class SpringSecurityConfigs {
-    
+
     @Autowired
     private UserDetailsService userDetailsService;
 
-    private UserDetailsService userDetailsService;
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
-            Exception {
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(c -> c.disable()).authorizeHttpRequests(requests
-                -> requests.requestMatchers("/", "/home").permitAll()
-                        .requestMatchers("/api/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/products").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET,
-                                "/products/**").hasAnyRole("USER", "ADMIN")
-                        .anyRequest().authenticated())
-                .formLogin(form -> form.loginPage("/login")
-                .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/", true)
-                .failureUrl("/login?error=true").permitAll())
-                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
-        return http.build();
     }
 
     @Bean
@@ -78,9 +55,7 @@ public class SpringSecurityConfigs {
         return new HandlerMappingIntrospector();
     }
 
-
     @Bean
-    @Order(0)
     public StandardServletMultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
     }
@@ -90,11 +65,18 @@ public class SpringSecurityConfigs {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:3000/")); 
+        config.setAllowedOrigins(List.of("http://localhost:3000/"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(true); 
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
+
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
@@ -116,6 +98,7 @@ public class SpringSecurityConfigs {
                 );
         return http.build();
     }
+
     @Bean
     public Cloudinary cloudinary() {
         Cloudinary cloudinary

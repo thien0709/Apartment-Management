@@ -2,10 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.apartment_management.repository.impl;
+package com.apartment_management.repositories.impl;
 
 import com.apartment_management.pojo.Response;
-import com.apartment_management.repository.ResponseRepository;
+import com.apartment_management.repositories.ResponseRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;

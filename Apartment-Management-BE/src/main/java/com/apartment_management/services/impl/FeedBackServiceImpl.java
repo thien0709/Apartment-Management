@@ -6,8 +6,8 @@ package com.apartment_management.services.impl;
 
 import com.apartment_management.pojo.Feedback;
 import com.apartment_management.pojo.User;
-import com.apartment_management.repository.FeedBackRepository;
-import com.apartment_management.repository.UserRepository;
+import com.apartment_management.repositories.FeedBackRepository;
+import com.apartment_management.repositories.UserRepository;
 import com.apartment_management.services.FeedBackService;
 import java.util.Date;
 import java.util.List;

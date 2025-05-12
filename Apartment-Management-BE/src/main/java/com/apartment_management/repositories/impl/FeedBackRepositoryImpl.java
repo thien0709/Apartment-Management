@@ -2,11 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.apartment_management.repository.impl;
+package com.apartment_management.repositories.impl;
 
 import com.apartment_management.pojo.Feedback;
 import com.apartment_management.pojo.User;
-import com.apartment_management.repository.FeedBackRepository;
+import com.apartment_management.repositories.FeedBackRepository;
 import jakarta.persistence.Query;
 import java.util.List;
 import org.hibernate.Session;
