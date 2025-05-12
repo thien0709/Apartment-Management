@@ -11,10 +11,10 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <!-- Thanh tìm kiếm -->
             <form th:action="@{/manage-user}" method="get" class="d-flex">
-                <input type="text" name="kw" class="form-control me-2" th:value="${params['kw']}" placeholder="Tìm kiếm người dùng...">
-                <button type="submit" class="btn btn-outline-primary">Tìm</button>
-                <input type="text" name="room_number" class="form-control me-2" th:value="${params['room_number']}" placeholder="Số phòng">
-                <button type="submit" class="btn btn-outline-primary">Tìm</button>
+                <input type="text" name="kw" class="form-control me-2" th:value="${params['kw']}" placeholder="Enter fullname ...">
+                <button type="submit" class="btn btn-outline-primary">Search</button>
+                <input type="text" name="room_number" class="form-control me-2" th:value="${params['room_number']}" placeholder="Enter room number ...">
+                <button type="submit" class="btn btn-outline-primary">Search</button>
             </form>
             
 
@@ -27,12 +27,13 @@
             <thead class="table-dark">
                 <tr>
                     <th class="text-center">ID</th>
-                    <th class="text-center">Tên</th>
+                    <th class="text-center">Full Name</th>
                     <th class="text-center">Email</th>
-                    <th class="text-center">Điện thoại</th>
-                    <th class="text-center">Vai trò</th>
-                    <th class="text-center">Số phòng</th>
-                    <th class="text-center">Hành động</th>
+                    <th class="text-center">Phone</th>
+                    <th class="text-center">Role</th>
+                    <th class="text-center">Room Number</th>
+                    <th class="text-center">Active</th>
+                    <th class="text-center">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -43,9 +44,13 @@
                     <td th:text="${user.phone}"></td>
                     <td th:text="${user.role}"></td>
                     <td th:text="${user.roomId != null ? user.roomId.roomNumber : 'Chưa phân phòng'}"></td>
+                    <td th:text="${user.isActive}"></td>
                     <td>
-                        <form th:action="@{/users/delete/{id}(id=${user.id})}" method="post" th:onsubmit="return confirm('Bạn có chắc chắn muốn xóa người dùng này?');">
-                            <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                        <form th:action="@{/manage-user/delete/{id}(id=${user.id})}" method="post" th:onsubmit="return confirm('Bạn có chắc chắn muốn xóa người dùng này?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                        <form th:action="@{/manage-user/block-user/{id}(id=${user.id})}" method="post" th:onsubmit="return confirm('Bạn có chắc chắn muốn khóa người dùng này?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Block</button>
                         </form>
                     </td>
                 </tr>

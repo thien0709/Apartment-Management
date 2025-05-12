@@ -143,4 +143,14 @@ public class UserServiceImpl implements UserService {
         return this.userRepo.getUserById(id);
     }
 
+    @Override
+    public User blockUser(int userId) {
+        User u = userRepo.getUserById(userId);
+        if (u != null && u.getIsActive()) {
+            u.setIsActive(Boolean.FALSE);
+            return userRepo.editProfile(u); // cập nhật lại vào DB
+        }
+        return u;
+    }
+
 }

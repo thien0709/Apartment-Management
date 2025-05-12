@@ -22,5 +22,6 @@ public interface UserService extends UserDetailsService {
     List<User> getUsers(Map<String, String> params);
     boolean deleteUser(int id);
     User getUserById(int id);
+    User blockUser(int userId);
 
 }

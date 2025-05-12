@@ -27,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -169,12 +170,20 @@ public class UserController {
         return "manage_user";
     }
 
-    @PostMapping("/users/delete/{id}")
+    @PostMapping("/manage-user/delete/{id}")
     public String deleteUser(@PathVariable("id") int id) {
         boolean temp = userSer.deleteUser(id);
         if (temp == true) {
             return "redirect:/manage-user";  // quay lại trang quản lý
         }
         return "Không thể xóa";
+    }
+    @PostMapping("/manage-user/block-user/{id}")
+    public String blockUser(@PathVariable("id") int id) {
+        User temp = userSer.blockUser(id);
+        if (temp != null) {
+            return "redirect:/manage-user";  // quay lại trang quản lý
+        }
+        return "Không thể khóa tài khoản";
     }
 }
