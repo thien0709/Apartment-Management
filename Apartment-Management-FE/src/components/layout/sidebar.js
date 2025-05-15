@@ -2,6 +2,7 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Offcanvas from "react-bootstrap/Offcanvas";
+import { Link, useNavigate } from "react-router-dom";
 
 function Sidebar() {
   return (
@@ -22,9 +23,9 @@ function Sidebar() {
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Nav className="justify-content-end flex-grow-1 pe-3">
-              <Nav.Link href="/">Trang chủ</Nav.Link>
-              <Nav.Link href="/payment">Thanh toán </Nav.Link>
-              <Nav.Link href="/login">Đăng nhập </Nav.Link>
+              <Link to="/">Trang chủ</Link>
+              <Link to="/payment">Thanh toán </Link>
+              <Link to="/login">Đăng nhập </Link>
             </Nav>
           </Offcanvas.Body>
         </Navbar.Offcanvas>
