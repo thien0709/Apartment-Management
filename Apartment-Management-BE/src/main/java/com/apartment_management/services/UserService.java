@@ -23,5 +23,4 @@ public interface UserService extends UserDetailsService {
     boolean deleteUser(int id);
     User getUserById(int id);
     User blockUser(int userId);
-
 }
