@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Fragments</title>
+</head>
+<body>
+<div th:fragment="roomDropdown">
+    <select id="room" name="roomId" class="form-select">
+        <option value="">-- Chọn phòng --</option>
+        <option th:each="r : ${rooms}" th:value="${r.id}" th:text="${r.roomNumber}"></option>
+    </select>
+</div>
+
+</body>
+</html>

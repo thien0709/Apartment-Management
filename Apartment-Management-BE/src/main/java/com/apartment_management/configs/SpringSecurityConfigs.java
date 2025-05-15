@@ -29,8 +29,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
  */
 /**
  *
- * @author thien ======= import
- * org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+ * @author thien
  */
 @Configuration
 @EnableWebSecurity
@@ -64,12 +63,11 @@ public class SpringSecurityConfigs {
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
-
-        config.setAllowedOrigins(List.of("http://localhost:3000/"));
+        config.setAllowedOrigins(List.of("http://localhost:3000","http://localhost:8080")); 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(true);
+        config.setAllowCredentials(true); 
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -77,12 +75,14 @@ public class SpringSecurityConfigs {
         return source;
     }
 
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(requests
                         -> requests
                         .requestMatchers("/", "/home").permitAll()
+                        .requestMatchers("/receive-package/**","/register","/manage-user/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form

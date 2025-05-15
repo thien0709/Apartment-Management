@@ -7,7 +7,9 @@ package com.apartment_management.repositories.impl;
 import com.apartment_management.pojo.Locker;
 import com.apartment_management.pojo.User;
 import com.apartment_management.repositories.LockerRepository;
+import java.util.List;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
@@ -32,7 +34,7 @@ public class LockerRepositoryImpl implements LockerRepository {
     public void createLocker(User u) {
         Locker locker = new Locker();
         locker.setId(u.getId());
-//        locker.setUser(u);
+        locker.setUser(u);
         getCurrentSession().persist(locker);
     }
 
@@ -49,6 +51,17 @@ public class LockerRepositoryImpl implements LockerRepository {
         if (locker != null) {
             this.getCurrentSession().remove(locker);
         }
+    }
+
+    @Override
+    public List<Locker> findAllLockers() {
+        Query query = getCurrentSession().createQuery("FROM Locker", Locker.class);
+        return query.getResultList();
+    }
+
+    @Override
+    public boolean existsById(int userId) {
+        return getLockerById(userId) != null;
     }
 
 }

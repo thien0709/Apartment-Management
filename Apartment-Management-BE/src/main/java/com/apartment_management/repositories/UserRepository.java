@@ -5,14 +5,14 @@
 package com.apartment_management.repositories;
 
 import com.apartment_management.pojo.User;
-import org.springframework.stereotype.Repository;
+import java.util.List;
+import java.util.Map;
 
 
 /**
  *
  * @author ADMIN
  */
-@Repository
 public interface UserRepository {
     User getUserByUserName(String username);
     User getUserById(int id);
@@ -20,4 +20,7 @@ public interface UserRepository {
     boolean authenticate(String username, String password);
     User authenticateForClient(String username, String password);
     User editProfile(User user);
+    List<User> getUsers(Map<String, String> params);
+    boolean deleteUser(int id);
+    List<User> findByRole(String role);
 }

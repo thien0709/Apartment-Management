@@ -9,6 +9,7 @@ import com.apartment_management.pojo.User;
 import com.apartment_management.repositories.LockerRepository;
 import com.apartment_management.repositories.UserRepository;
 import com.apartment_management.services.LockerService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,5 +39,9 @@ public class LockerServiceImpl implements LockerService{
     @Override
     public void deleteLocker(int userId) {
         this.lockerRepo.deleteLocker(userId);
+    }
+    @Override
+    public List<Locker> findAllLockers() {
+        return lockerRepo.findAllLockers();
     }
 }

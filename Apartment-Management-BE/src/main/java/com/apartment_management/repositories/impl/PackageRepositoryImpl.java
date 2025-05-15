@@ -39,7 +39,7 @@ public class PackageRepositoryImpl implements PackageRepository {
             p.setName(name);
             p.setCreatedAt(new Date());
             p.setLockerId(locker);
-            p.setStatus("Chờ nhận");
+            p.setStatus("PENDING");
             this.getCurrentSession().persist(p);
         }
     }
@@ -67,5 +67,26 @@ public class PackageRepositoryImpl implements PackageRepository {
         q.setParameter("status", status);
         return q.getResultList();
     }
+    @Override
+    public void updatePackageStatus(int packageId, String status) {
+        Package p = getCurrentSession().get(Package.class, packageId);;
+        if (p != null) {
+            p.setStatus(status);
+            getCurrentSession().update(p);
+        }
+    }
+
+    @Override
+    public void deletePackage(int packageId) {
+        Package p = getCurrentSession().get(Package.class, packageId);;
+        if (p != null) {
+            getCurrentSession().remove(p);
+        }
+    }
+    @Override
+    public Package getPackageById(int packageId) {
+        return getCurrentSession().get(Package.class, packageId);
+    }
+
 
 }

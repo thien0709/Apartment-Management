@@ -4,9 +4,11 @@
  */
 package com.apartment_management.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,7 +42,8 @@ public class Floor implements Serializable {
     @NotNull
     @Column(name = "floor_number")
     private int floorNumber;
-    @OneToMany(mappedBy = "floorId")
+    @OneToMany(mappedBy = "floorId", fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<Room> roomSet;
 
     public Floor() {

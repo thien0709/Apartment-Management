@@ -19,4 +19,10 @@ public interface PackageService {
     List<Package> findByUserIdAndStatus(int userId, String status);
 
     List<Package> findByStatus(String status);
+    
+    Package getPackageById(int packageId);
+    
+    void updatePackageStatus(int packageId, String status);
+    
+    void deletePackage(int packageId);
 }

@@ -15,4 +15,7 @@ public interface PackageRepository {
     List<Package> findByUserId(int userId);
     List<Package> findByUserIdAndStatus(int userId,String status);
     List<Package> findByStatus(String status);
+    void updatePackageStatus(int packageId, String status);
+    void deletePackage(int packageId);
+    Package getPackageById(int packageId);
 }

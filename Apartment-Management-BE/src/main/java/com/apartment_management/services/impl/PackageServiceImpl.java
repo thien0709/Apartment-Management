@@ -40,5 +40,18 @@ public class PackageServiceImpl implements PackageService{
     public List<Package> findByStatus(String status) {
         return this.packageRepo.findByStatus(status);
     }
+    @Override
+    public Package getPackageById(int packageId) {
+        return packageRepo.getPackageById(packageId);
+    }
+    @Override
+    public void updatePackageStatus(int packageId, String status) {
+        packageRepo.updatePackageStatus(packageId, status);
+    }
+
+    @Override
+    public void deletePackage(int packageId) {
+        packageRepo.deletePackage(packageId);
+    }
 
 }
