@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
 package com.apartment_management.repositories;
+
 import com.apartment_management.pojo.Question;
 import java.util.List;
 

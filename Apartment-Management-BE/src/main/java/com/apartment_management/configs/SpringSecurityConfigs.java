@@ -1,4 +1,3 @@
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -28,11 +27,9 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 /**
  *
  * @author thien
-=======
  */
 @Configuration
 @EnableWebSecurity
@@ -43,7 +40,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
     "com.apartment_management.services"
 })
 public class SpringSecurityConfigs {
-    
+
     @Autowired
     private UserDetailsService userDetailsService;
 
@@ -57,7 +54,6 @@ public class SpringSecurityConfigs {
         return new HandlerMappingIntrospector();
     }
 
-
     @Bean
     public StandardServletMultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
@@ -67,7 +63,6 @@ public class SpringSecurityConfigs {
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
-
         config.setAllowedOrigins(List.of("http://localhost:3000","http://localhost:8080")); 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
@@ -79,6 +74,7 @@ public class SpringSecurityConfigs {
 
         return source;
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -102,6 +98,7 @@ public class SpringSecurityConfigs {
                 );
         return http.build();
     }
+
     @Bean
     public Cloudinary cloudinary() {
         Cloudinary cloudinary
