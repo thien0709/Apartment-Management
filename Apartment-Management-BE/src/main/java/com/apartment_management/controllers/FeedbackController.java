@@ -4,10 +4,13 @@
  */
 package com.apartment_management.controllers;
 
+import org.springframework.stereotype.Controller;
+
 /**
  *
  * @author thien
  */
+@Controller
 public class FeedbackController {
     
 }
