@@ -5,6 +5,7 @@ const BASE_URL = 'http://localhost:8080/apartment_management/api/';
 
 export const endpoints = {
     'login': '/login',
+    'current-user': '/secure/profile'
 }
 
 export const authApis = () => {

@@ -6,11 +6,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Footer from './components/layout/footer';
 import Login from './components/login';
 import Payment from './components/payment';
+import { AuthProvider } from './configs/MyContexts';
 
 function App() {
   return (
     <div className="app-container">
-      <BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
         <Sidebar />
         <div className="content-wrap">
           <Routes> 
@@ -21,6 +23,8 @@ function App() {
         </div>
         <Footer />
       </BrowserRouter>
+      </AuthProvider>
+      
     </div>
   );
 }
