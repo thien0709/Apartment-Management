@@ -25,5 +25,5 @@ public interface UserService extends UserDetailsService {
     User blockUser(int userId);
     User updateAvatar(int userId, MultipartFile file);
     boolean changePassword(int userId, String oldPassword, String newPassword);
-
+    List<User> findByRole(String role);
 }

@@ -15,29 +15,30 @@ const Payment = () => {
   const [loading, setLoading] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const user = useContext(MyUserContext);
-  const location = useLocation();
+  // const location = useLocation();
 
-  useEffect(() => {
-    const query = new URLSearchParams(location.search);
-    const status = query.get("status");
-    const error = query.get("error");
+  // useEffect(() => {
+  //   const query = new URLSearchParams(location.search);
+  //   const status = query.get("status");
+  //   const error = query.get("error");
 
-    if (status === "success") {
-      setPaymentStatus({ type: "success", message: "Thanh toán thành công!" });
-      loadInvoices();
-    } else if (status === "cancel") {
-      setPaymentStatus({ type: "warning", message: "Thanh toán đã bị hủy." });
-    } else if (status === "fail") {
-      setPaymentStatus({ type: "danger", message: "Thanh toán thất bại." });
-    } else if (error) {
-      setPaymentStatus({ type: "danger", message: `Lỗi: ${error}` });
-    }
-  }, [location]);
+  //   if (status === "success") {
+  //     setPaymentStatus({ type: "success", message: "Thanh toán thành công!" });
+  //     loadInvoices();
+  //   } else if (status === "cancel") {
+  //     setPaymentStatus({ type: "warning", message: "Thanh toán đã bị hủy." });
+  //   } else if (status === "fail") {
+  //     setPaymentStatus({ type: "danger", message: "Thanh toán thất bại." });
+  //   } else if (error) {
+  //     setPaymentStatus({ type: "danger", message: `Lỗi: ${error}` });
+  //   }
+  // }, [location]);
+
 
   const loadInvoices = async () => {
     try {
       setLoading(true);
-      const res = await Apis.get(endpoints["invoices"](user.user.id), {
+      const res = await Apis.get(endpoints["invoices"](user.user?.id), {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
@@ -51,11 +52,11 @@ const Payment = () => {
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      loadInvoices();
-    }
-  }, [user]);
+useEffect(() => {
+  console.log("Loading invoices for user", user.user?.id);
+  loadInvoices();
+}, [user]);
+
 
   const handleItemClick = (id) => {
     const invoice = invoices.find((inv) => inv.id === id);
@@ -93,7 +94,7 @@ const Payment = () => {
         const res = await Apis.post(
           endpoints["payment"],
           {
-            items: selectedItems,
+            invoiceId: selectedItems,
             amount: totalAmount,
           },
           {
@@ -102,6 +103,8 @@ const Payment = () => {
             },
           }
         );
+        console.log("Kết quả thanh toán:", res);
+        console.log("URL thanh toán:", res.data);
         window.open(res.data, "_blank");
       } else {
         setPaymentStatus({
