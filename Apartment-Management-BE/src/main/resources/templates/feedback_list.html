@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Quản lý phản ánh</title>
+    <head>
+        <title>Quản lý phản ánh</title>
     <th:block th:replace="base :: bootstrap"></th:block>
+    <style>
+        /* Tăng chiều rộng của dropdown */
+        .form-select {
+            min-width: 160px;
+        }
+    </style>
 </head>
 <body>
     <div th:replace="base :: header"></div>
 
     <div class="container mt-4">
         <h2 class="mb-4">Danh sách phản ánh</h2>
-        <table class="table table-striped table-bordered">
+        <table class="table table-striped table-bordered align-middle">
             <thead class="table-dark">
                 <tr>
                     <th scope="col">ID</th>
@@ -17,7 +23,6 @@
                     <th scope="col">Nội dung</th>
                     <th scope="col">Ngày gửi</th>
                     <th scope="col">Trạng thái</th>
-                    <th scope="col">Hành động</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,17 +32,16 @@
                     <td th:text="${fb.content}">Nội dung phản ánh...</td>
                     <td th:text="${#dates.format(fb.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2025</td>
                     <td>
-                        <span th:text="${fb.status}" 
-                              th:classappend="${fb.status == 'PENDING'} ? 'badge bg-warning text-dark' :
-                                               (fb.status == 'RESOLVED') ? 'badge bg-success' :
-                                               'badge bg-secondary'">
-                            PENDING
-                        </span>
-                    </td>
-                    <td>
-                        <a th:href="@{'/feedbacks/' + ${fb.id}}" class="btn btn-sm btn-primary">
-                            Xem chi tiết
-                        </a>
+                        <form th:action="@{'/feedbacks/' + ${fb.id} + '/status'}" method="post" class="d-flex align-items-center gap-2">
+                            <select name="status"
+                                    class="form-select"
+                                    th:class="${fb.status == 'PENDING' ? 'bg-warning text-dark' :
+                                    fb.status == 'RESOLVED' ? 'bg-success text-white' : ''}">
+                                <option th:value="PENDING" th:selected="${fb.status == 'PENDING'}">PENDING</option>
+                                <option th:value="RESOLVED" th:selected="${fb.status == 'RESOLVED'}">RESOLVED</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary">Cập nhật</button>
+                        </form>
                     </td>
                 </tr>
             </tbody>

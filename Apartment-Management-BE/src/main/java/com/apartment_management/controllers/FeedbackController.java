@@ -34,14 +34,14 @@ public class FeedbackController {
     public String listFeedbacks(Model model) {
         List<Feedback> feedbacks = feedbackSer.getAllFeedbacks();
         model.addAttribute("feedbacks", feedbacks);
-        return "feedback_list";
+        return "feedback_list";    
     }
 
     // Xem chi tiết một feedback
     @GetMapping("/{id}")
     public String feedbackDetail(@PathVariable("id") int id, Model model) {
         model.addAttribute("feedback", feedbackSer.getFeedBackById(id));
-        return "feedback_detail";
+        return "feedback_list";
     }
 
     // Cập nhật trạng thái feedback
@@ -49,6 +49,6 @@ public class FeedbackController {
     public String updateFeedbackStatus(@PathVariable("id") int id,
             @RequestParam("status") String status) {
         feedbackSer.updateFeedbackStatus(id, status);
-        return "redirect:/admin/feedbacks";
+        return "redirect:/feedbacks";
     }
 }

@@ -10,7 +10,7 @@ import java.util.Date;
  *
  * @author thien
  */
-public class FeedbackDTO {
+public class FeedbackResponse {
 
     private Integer id;
     private String content;
