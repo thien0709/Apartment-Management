@@ -15,5 +15,8 @@ import java.util.Set;
  */
 public interface InvoiceService {
     Invoice createInvoice(Invoice invoice, Set<DetailInvoice> detailInvoices);
+    List<Invoice> findAll();
+    Invoice findById(Integer id);
+    boolean deleteInvoice(Integer id);
     
 }

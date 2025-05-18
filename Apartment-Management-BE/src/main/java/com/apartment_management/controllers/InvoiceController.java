@@ -122,6 +122,23 @@ public class InvoiceController {
         invoiceService.createInvoice(invoice, detailInvoices);
 
         redirectAttributes.addFlashAttribute("success", "Hóa đơn đã được tạo thành công!");
-        return "redirect:/invoice/create";
+        return "redirect:/invoices";
+    }
+
+    @GetMapping("/invoices")
+    public String showAllInvoices(Model model) {
+        List<Invoice> invoices = invoiceService.findAll();
+        model.addAttribute("invoices", invoices);
+        return "invoice-list";
+    }
+    @GetMapping("/invoices/delete")
+    public String deleteInvoice(@RequestParam("id") Integer id, RedirectAttributes redirectAttributes) {
+        boolean deleted = invoiceService.deleteInvoice(id);
+        if (deleted) {
+            redirectAttributes.addFlashAttribute("success", "Xóa hóa đơn thành công!");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Không tìm thấy hóa đơn để xóa.");
+        }
+        return "redirect:/invoices";
     }
 }

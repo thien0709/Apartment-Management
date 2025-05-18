@@ -52,4 +52,12 @@ public class InvoiceRepositoryImpl implements InvoiceRepository {
                 .setParameter("id", id)
                 .getSingleResult();
     }
+    @Override
+    public void deleteInvoice(Integer id) {
+        Session session = getCurrentSession();
+        Invoice invoice = session.get(Invoice.class, id);
+        if (invoice != null) {
+            session.delete(invoice);
+        }
+    }
 }

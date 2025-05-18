@@ -15,4 +15,5 @@ public interface InvoiceRepository {
     Invoice createInvoice(Invoice invoice);
     List<Invoice> findAll();
     Invoice findById(Integer id);
+    void deleteInvoice(Integer id);
 }

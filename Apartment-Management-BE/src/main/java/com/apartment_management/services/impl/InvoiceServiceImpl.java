@@ -27,6 +27,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     private DetailInvoiceRepository detailInvoiceRepository;
+
     @Override
     public Invoice createInvoice(Invoice invoice, Set<DetailInvoice> detailInvoices) {
         // Đặt ngày phát hành là ngày hiện tại nếu chưa có
@@ -49,5 +50,31 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         savedInvoice.setDetailInvoiceSet(detailInvoices);
         return savedInvoice;
+    }
+
+    @Override
+    public List<Invoice> findAll() {
+        return invoiceRepository.findAll();
+    }
+
+    @Override
+    public Invoice findById(Integer id) {
+        return invoiceRepository.findById(id);
+    }
+
+    @Override
+    public boolean deleteInvoice(Integer id) {
+        Invoice invoice = invoiceRepository.findById(id);
+        if (invoice != null) {
+            if ("PAID".equals(invoice.getStatus())) {
+                System.out.println("Cannot delete paid invoice ID: " + id);
+                return false;
+            }
+            invoiceRepository.deleteInvoice(id);
+            System.out.println("Deleted invoice ID: " + id);
+            return true;
+        }
+        System.out.println("Invoice ID: " + id + " not found");
+        return false;
     }
 }
