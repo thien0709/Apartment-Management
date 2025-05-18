@@ -24,4 +24,5 @@ public class InvoiceServiceImpl implements InvoiceService{
     public List<Invoice> getInvoicesByUserId(int userId) {
         return invoiceRepository.getInvoicesByUserId(userId);
     }
+    
 }

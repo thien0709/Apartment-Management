@@ -7,7 +7,10 @@ export const endpoints = {
     'login': '/login',
     'current-user': '/secure/profile',
     'change-password': (userId) => `users/${userId}/change_password`,
-    'updateAvatar': (userId) => `/users/${userId}/update_avatar`
+    'updateAvatar': (userId) => `/users/${userId}/update_avatar`,
+    'invoices': (userId) => `/invoices/${userId}`,
+    'payment': '/payment',
+    'feedback': '/feedback',
 }
 
 export const authApis = (token = null) => {

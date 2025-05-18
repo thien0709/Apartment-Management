@@ -8,6 +8,6 @@ package com.apartment_management.dto.reponse;
  *
  * @author thien
  */
-public class UserDTO {
+public class UserReponse {
     
 }

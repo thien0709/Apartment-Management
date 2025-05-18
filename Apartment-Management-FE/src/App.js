@@ -9,6 +9,7 @@ import Payment from './components/payment';
 import { AuthProvider } from './configs/MyContexts';
 import ChangePassword from './components/changePassword';
 import UploadAvatar from './components/uploadAvatar';
+import Feedback from './components/feedback';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/payment" element={<Payment />} />
+            <Route path="/feedback" element={<Feedback />} />
             <Route path='/change-password' element={<ChangePassword/>} />
             <Route path='/update-avatar' element={<UploadAvatar/>} />
           </Routes>
