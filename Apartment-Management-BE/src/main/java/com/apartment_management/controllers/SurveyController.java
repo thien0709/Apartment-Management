@@ -33,16 +33,16 @@ public class SurveyController {
     @Autowired
     private QuestionService questionService;
 
-    // 1. Hiển thị danh sách khảo sát
+    // Hiển thị danh sách khảo sát
     @GetMapping
     public String listSurveys(Model model) {
         List<Survey> surveys = surveyService.getAllSurveys();
         model.addAttribute("surveys", surveys);
         model.addAttribute("title", "Quản lý khảo sát");
-        return "survey_list"; // View: hiển thị danh sách
+        return "survey_list"; 
     }
 
-    // 2. Xem chi tiết khảo sát + danh sách câu hỏi
+    // Xem chi tiết khảo sát + danh sách câu hỏi
     @GetMapping("/detail/{id}")
     public String surveyDetail(@PathVariable("id") int id, Model model) {
         Survey survey = surveyService.getSurveyById(id);
@@ -54,10 +54,10 @@ public class SurveyController {
         model.addAttribute("survey", survey);
         model.addAttribute("questions", questions);
         model.addAttribute("newQuestion", new Question());
-        return "survey_detail"; // View: chi tiết + danh sách câu hỏi
+        return "survey_detail"; 
     }
 
-    // 3. Thêm câu hỏi mới
+    // Thêm câu hỏi mới
 @PostMapping("/{surveyId}/question/add")
 public String addQuestion(@PathVariable("surveyId") int surveyId,
                           @RequestParam("content") String content) {
@@ -67,7 +67,7 @@ public String addQuestion(@PathVariable("surveyId") int surveyId,
 
 
 
-    // 4. Sửa nội dung câu hỏi
+    // Sửa nội dung câu hỏi
     @PostMapping("/{surveyId}/question/edit/{questionId}")
     public String editQuestion(@PathVariable("surveyId") int surveyId,
                                @PathVariable("questionId") int questionId,
@@ -76,7 +76,7 @@ public String addQuestion(@PathVariable("surveyId") int surveyId,
         return "redirect:/survey-manage/detail/" + surveyId;
     }
 
-    // 5. Xoá câu hỏi
+    // Xoá câu hỏi
     @PostMapping("/{surveyId}/question/delete/{questionId}")
     public String deleteQuestion(@PathVariable("surveyId") int surveyId,
                                  @PathVariable("questionId") int questionId) {
@@ -84,7 +84,7 @@ public String addQuestion(@PathVariable("surveyId") int surveyId,
         return "redirect:/survey-manage/detail/" + surveyId;
     }
 
-    // 6. Hiển thị form tạo khảo sát
+    // Hiển thị form tạo khảo sát
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         model.addAttribute("survey", new Survey());
@@ -93,14 +93,14 @@ public String addQuestion(@PathVariable("surveyId") int surveyId,
         return "survey_form"; // => tách riêng file survey_form.html
     }
 
-    // 7. Xử lý tạo khảo sát
+    // Xử lý tạo khảo sát
     @PostMapping("/create")
     public String createSurvey(@ModelAttribute Survey survey) {
         surveyService.createSurvey(survey.getTitle(), survey.getDescription());
         return "redirect:/survey-manage";
     }
 
-    // 8. Hiển thị form sửa khảo sát
+    // Hiển thị form sửa khảo sát
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable("id") int id, Model model) {
         Survey survey = surveyService.getSurveyById(id);
@@ -113,7 +113,7 @@ public String addQuestion(@PathVariable("surveyId") int surveyId,
         return "survey_form"; 
     }
 
-    // 9. Xử lý cập nhật khảo sát
+    // Xử lý cập nhật khảo sát
     @PostMapping("/edit/{id}")
     public String editSurvey(@PathVariable("id") int id,
                              @ModelAttribute Survey survey) {

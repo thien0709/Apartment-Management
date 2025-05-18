@@ -11,6 +11,7 @@ export const endpoints = {
     'invoices': (userId) => `/invoices/${userId}`,
     'payment': '/payment',
     'feedback': '/feedback',
+    'feedbacks': (userId) => `/feedback/${userId}`,
 }
 
 export const authApis = (token = null) => {

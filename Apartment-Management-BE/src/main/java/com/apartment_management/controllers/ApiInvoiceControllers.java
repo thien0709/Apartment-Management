@@ -24,12 +24,12 @@ public class ApiInvoiceControllers {
     @Autowired
     private InvoiceService invoiceService;
 
-//    @GetMapping("/invoices/{userId}")
-//    public ResponseEntity<List<Invoice>> getInvoicesByUser(@PathVariable("userId") int userId) {
-//        List<Invoice> invoices = invoiceService;
-//        if (invoices.isEmpty()) {
-//            return ResponseEntity.noContent().build();
-//        }
-//        return ResponseEntity.ok(invoices);
-//    }
+    @GetMapping("/invoices/{userId}")
+    public ResponseEntity<List<Invoice>> getInvoicesByUser(@PathVariable("userId") int userId) {
+        List<Invoice> invoices = invoiceService.getInvoicesByUserId(userId);
+        if (invoices.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(invoices);
+    }
 }
