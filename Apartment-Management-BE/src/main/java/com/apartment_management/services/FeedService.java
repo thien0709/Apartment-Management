@@ -4,16 +4,14 @@
  */
 package com.apartment_management.services;
 
-import com.apartment_management.pojo.DetailInvoice;
-import com.apartment_management.pojo.Invoice;
+import com.apartment_management.pojo.Feed;
 import java.util.List;
-import java.util.Set;
 
 /**
  *
  * @author ADMIN
  */
-public interface InvoiceService {
-    Invoice createInvoice(Invoice invoice, Set<DetailInvoice> detailInvoices);
+public interface FeedService {
+    List<Feed> getAllFeeds();
     
 }

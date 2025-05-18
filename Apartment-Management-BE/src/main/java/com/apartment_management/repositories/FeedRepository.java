@@ -4,15 +4,14 @@
  */
 package com.apartment_management.repositories;
 
-import com.apartment_management.pojo.Invoice;
+import com.apartment_management.pojo.Feed;
 import java.util.List;
 
 /**
  *
  * @author ADMIN
  */
-public interface InvoiceRepository {
-    Invoice createInvoice(Invoice invoice);
-    List<Invoice> findAll();
-    Invoice findById(Integer id);
+public interface FeedRepository {
+
+    List<Feed> getAllFeeds();            
 }

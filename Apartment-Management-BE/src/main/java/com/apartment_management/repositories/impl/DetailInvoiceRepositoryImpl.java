@@ -5,13 +5,11 @@
 package com.apartment_management.repositories.impl;
 
 import com.apartment_management.pojo.DetailInvoice;
-import com.apartment_management.pojo.Feed;
-import com.apartment_management.pojo.Invoice;
-import com.apartment_management.repositories.InvoiceRepository;
-import java.math.BigDecimal;
+import com.apartment_management.repositories.DetailInvoiceRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
@@ -23,33 +21,35 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Transactional
-public class InvoiceRepositoryImpl implements InvoiceRepository {
-
+public class DetailInvoiceRepositoryImpl implements DetailInvoiceRepository{
+    
     @Autowired
     private LocalSessionFactoryBean sessionFactory;
 
     private Session getCurrentSession() {
         return sessionFactory.getObject().getCurrentSession();
     }
-    
+
     @Override
-    public Invoice createInvoice(Invoice invoice) {
-        getCurrentSession().persist(invoice);
-        return invoice;
+    public void createDetailInvoice(DetailInvoice detailInvoice) {
+        getCurrentSession().persist(detailInvoice);
     }
 
     @Override
-    public List<Invoice> findAll() {
+    public List<DetailInvoice> findAll() {
         return getCurrentSession()
-                .createNamedQuery("Invoice.findAll", Invoice.class)
+                .createNamedQuery("DetailInvoice.findAll", DetailInvoice.class)
                 .getResultList();
     }
 
     @Override
-    public Invoice findById(Integer id) {
+    public List<DetailInvoice> findByInvoiceId(Integer invoiceId) {
         return getCurrentSession()
-                .createNamedQuery("Invoice.findById", Invoice.class)
-                .setParameter("id", id)
-                .getSingleResult();
+                .createNamedQuery("DetailInvoice.findAll", DetailInvoice.class)
+                .getResultList()
+                .stream()
+                .filter(detail -> detail.getInvoiceId().getId().equals(invoiceId))
+                .toList();
     }
+    
 }

@@ -26,6 +26,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  *
@@ -53,9 +54,11 @@ public class Invoice implements Serializable {
     @NotNull
     @Column(name = "issued_date")
     @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date issuedDate;
     @Column(name = "due_date")
     @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dueDate;
     @Size(max = 8)
     @Column(name = "payment_method")

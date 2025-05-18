@@ -4,11 +4,8 @@
  */
 package com.apartment_management.repositories.impl;
 
-import com.apartment_management.pojo.DetailInvoice;
 import com.apartment_management.pojo.Feed;
-import com.apartment_management.pojo.Invoice;
-import com.apartment_management.repositories.InvoiceRepository;
-import java.math.BigDecimal;
+import com.apartment_management.repositories.FeedRepository;
 import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -23,33 +20,19 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Transactional
-public class InvoiceRepositoryImpl implements InvoiceRepository {
-
+public class FeedRepositoryImpl implements FeedRepository{
     @Autowired
     private LocalSessionFactoryBean sessionFactory;
 
     private Session getCurrentSession() {
         return sessionFactory.getObject().getCurrentSession();
     }
-    
-    @Override
-    public Invoice createInvoice(Invoice invoice) {
-        getCurrentSession().persist(invoice);
-        return invoice;
-    }
 
     @Override
-    public List<Invoice> findAll() {
+    public List<Feed> getAllFeeds() {
         return getCurrentSession()
-                .createNamedQuery("Invoice.findAll", Invoice.class)
+                .createNamedQuery("Feed.findAll", Feed.class)
                 .getResultList();
     }
-
-    @Override
-    public Invoice findById(Integer id) {
-        return getCurrentSession()
-                .createNamedQuery("Invoice.findById", Invoice.class)
-                .setParameter("id", id)
-                .getSingleResult();
-    }
+    
 }
