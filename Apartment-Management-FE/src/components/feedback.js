@@ -13,10 +13,9 @@ const Feedback = () => {
     try {
       const res = await Apis.get(endpoints["feedbacks"](user.user?.id), {
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `Bearer ${user.user.token}`,
         },
       });
-      console.log("Phản ánh:", res.data);
       setFeedbacks(res.data);
     } catch (error) {
       console.error("Lỗi tải phản ánh:", error);
@@ -37,17 +36,18 @@ const Feedback = () => {
     setIsSubmitting(true);
 
     try {
+      console.log("Gửi phản ánh:", content);
+      console.log("ID phản ánh:", editingId);
       if (editingId) {
-        // Cập nhật phản ánh
-        const res = await Apis.put(`${endpoints["feedback"]}/${editingId}`, {
+        const res = await Apis.put(endpoints["edit-feedback"](editingId), {
           content,
         });
+        console.log("Cập nhật phản ánh:", res);
         if (res.status === 200) {
           alert("Đã cập nhật phản ánh.");
           setEditingId(null);
         }
       } else {
-        // Tạo phản ánh mới
         const res = await Apis.post(endpoints["feedback"], {
           userId: user.user.id,
           content,
@@ -56,7 +56,6 @@ const Feedback = () => {
           alert("Phản ánh của bạn đã được gửi thành công!");
         }
       }
-
       setContent("");
       await loadFeedbacks();
     } catch (error) {
@@ -68,14 +67,17 @@ const Feedback = () => {
   };
 
   const handleEdit = (fb) => {
+      console.log("Phản ánh được chỉnh sửa:", fb);
+  console.log("Nội dung phản ánh:", fb.content);
     setContent(fb.content);
     setEditingId(fb.id);
+
   };
 
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc muốn xóa phản ánh này không?")) {
       try {
-        const res = await Apis.delete(`${endpoints["feedback"]}/${id}`);
+        const res = await Apis.delete(endpoints["edit-feedback"](id));
         if (res.status === 204) {
           alert("Đã xóa phản ánh.");
           await loadFeedbacks();
@@ -84,6 +86,14 @@ const Feedback = () => {
         console.error("Lỗi xóa phản ánh:", err);
         alert("Không thể xóa phản ánh.");
       }
+    }
+  };
+
+  const renderStatus = (status) => {
+    if (status === "PENDING") {
+      return <span className="badge bg-warning text-dark">Đang chờ</span>;
+    } else {
+      return <span className="badge bg-success">Đã duyệt</span>;
     }
   };
 
@@ -136,14 +146,30 @@ const Feedback = () => {
           ) : (
             <ul className="list-group">
               {feedbacks.map((fb) => (
-                <li key={fb.id} className="list-group-item d-flex justify-content-between align-items-start">
+                <li
+                  key={fb.id}
+                  className="list-group-item d-flex justify-content-between align-items-start"
+                >
                   <div className="flex-grow-1">
                     <p className="mb-1">{fb.content}</p>
-                    <small className="text-muted">Ngày gửi: {new Date(fb.createdAt).toLocaleString()}</small>
+                    <small className="text-muted">
+                      Ngày gửi: {new Date(fb.createdAt).toLocaleString()}
+                    </small>
+                    <div className="mt-1">{renderStatus(fb.status)}</div>
                   </div>
                   <div className="btn-group btn-group-sm">
-                    <button onClick={() => handleEdit(fb)} className="btn btn-outline-secondary">Sửa</button>
-                    <button onClick={() => handleDelete(fb.id)} className="btn btn-outline-danger">Xoá</button>
+                    <button
+                      onClick={() => handleEdit(fb)}
+                      className="btn btn-outline-secondary"
+                    >
+                      Sửa
+                    </button>
+                    <button
+                      onClick={() => handleDelete(fb.id)}
+                      className="btn btn-outline-danger"
+                    >
+                      Xoá
+                    </button>
                   </div>
                 </li>
               ))}

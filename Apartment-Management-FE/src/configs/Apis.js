@@ -12,6 +12,8 @@ export const endpoints = {
     'payment': '/payment',
     'feedback': '/feedback',
     'feedbacks': (userId) => `/feedback/${userId}`,
+    'edit-feedback': (feedbackId) => `/feedback/${feedbackId}`,
+
 }
 
 export const authApis = (token = null) => {
