@@ -23,4 +23,5 @@ public interface UserRepository {
     List<User> getUsers(Map<String, String> params);
     boolean deleteUser(int id);
     List<User> findByRole(String role);
+    List<Object[]> getUserStatsByPeriod(String period, int year);
 }

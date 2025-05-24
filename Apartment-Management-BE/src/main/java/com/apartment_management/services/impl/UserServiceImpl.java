@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -192,6 +193,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findByRole(String role) {
         return userRepo.findByRole(role);
+    }
+    
+    @Override
+    public Map<String, Long> getUserStatsByPeriod(String period, int year) {
+        List<Object[]> results = userRepo.getUserStatsByPeriod(period, year);
+        Map<String, Long> stats = results.stream()
+                .collect(Collectors.toMap(
+                        row -> String.valueOf(row[0]), // Period (month, quarter, or year)
+                        row -> (Long) row[1] // Count
+                ));
+        return stats;
     }
 
 }

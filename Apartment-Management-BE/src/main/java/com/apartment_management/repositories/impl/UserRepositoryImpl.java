@@ -144,5 +144,29 @@ public class UserRepositoryImpl implements UserRepository {
         query.setParameter("role", role);
         return query.getResultList();
     }
+    
+    @Override
+    public List<Object[]> getUserStatsByPeriod(String period, int year) {
+        Session session = factory.getObject().getCurrentSession();
+        String hql;
+        switch (period.toLowerCase()) {
+            case "month":
+                hql = "SELECT MONTH(u.createdAt), COUNT(u) FROM User u WHERE YEAR(u.createdAt) = :year GROUP BY MONTH(u.createdAt)";
+                break;
+            case "quarter":
+                hql = "SELECT QUARTER(u.createdAt), COUNT(u) FROM User u WHERE YEAR(u.createdAt) = :year GROUP BY QUARTER(u.createdAt)";
+                break;
+            case "year":
+                hql = "SELECT YEAR(u.createdAt), COUNT(u) FROM User u GROUP BY YEAR(u.createdAt)";
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid period: " + period);
+        }
+        Query query = session.createQuery(hql);
+        if (!period.equalsIgnoreCase("year")) {
+            query.setParameter("year", year);
+        }
+        return query.getResultList();
+    }
 
 }
