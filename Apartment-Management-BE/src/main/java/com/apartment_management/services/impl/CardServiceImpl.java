@@ -35,7 +35,7 @@ public class CardServiceImpl implements CardService {
             card.setIssueDate(new Date());
             Calendar cal = Calendar.getInstance();
             cal.setTime(card.getIssueDate());
-            cal.add(Calendar.MONTH, 3); // ngày hết hạn là sau 3 tháng kể từ ngày cấp
+            cal.add(Calendar.MONTH, 3);
             card.setExpirationDate(cal.getTime());
             return cardRepo.addCarrd(card);
         }
@@ -52,6 +52,10 @@ public class CardServiceImpl implements CardService {
     @Override
     public boolean deleteCard(int cardId) {
         return cardRepo.deleteCard(cardId);
+    }
+    @Override
+    public List<Card> getAllCards() {
+        return cardRepo.getAllCards();
     }
 
 }

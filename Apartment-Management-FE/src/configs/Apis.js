@@ -7,12 +7,14 @@ export const endpoints = {
     'login': '/login',
     'current-user': '/secure/profile',
     'change-password': (userId) => `users/${userId}/change_password`,
-    'updateAvatar': (userId) => `/users/${userId}/update_avatar`
+    'updateAvatar': (userId) => `/users/${userId}/update_avatar`,
+    'create-Card' : '/card/create',
+    'delete-card' : (cardId) => `/card/delete/${cardId}`
 }
 
 export const authApis = (token = null) => {
     if (!token) {
-        token = cookie.load('token'); // fallback nếu không truyền từ props
+        token = cookie.load('token');
     }
 
     return axios.create({

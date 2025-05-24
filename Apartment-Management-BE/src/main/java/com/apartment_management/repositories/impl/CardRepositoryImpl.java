@@ -20,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Transactional
-public class CardRepositoryImpl implements CardRepository{
+public class CardRepositoryImpl implements CardRepository {
+
     @Autowired
     private LocalSessionFactoryBean factory;
 
@@ -30,13 +31,16 @@ public class CardRepositoryImpl implements CardRepository{
         s.persist(c);
         return c;
     }
-    @Override
+
     public List<Card> getCardsByUserId(int userId) {
         Session session = factory.getObject().getCurrentSession();
-        Query<Card> query = session.createQuery("FROM Card c WHERE c.userId.id = :userId", Card.class);
+        Query<Card> query = session.createQuery(
+                "FROM Card c WHERE c.userId.id = :userId AND c.status = :status", Card.class);
         query.setParameter("userId", userId);
+        query.setParameter("status", "active");
         return query.getResultList();
     }
+
     @Override
     public boolean deleteCard(int cardId) {
         Session session = factory.getObject().getCurrentSession();
@@ -47,5 +51,11 @@ public class CardRepositoryImpl implements CardRepository{
         }
         return false;
     }
-    
+    @Override
+    public List<Card> getAllCards() {
+        Session session = factory.getObject().getCurrentSession();
+        Query<Card> query = session.createQuery("FROM Card c", Card.class);
+        return query.getResultList();
+    }
+
 }

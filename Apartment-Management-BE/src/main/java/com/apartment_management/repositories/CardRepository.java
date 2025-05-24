@@ -15,5 +15,6 @@ public interface CardRepository {
     Card addCarrd(Card card);
     List<Card> getCardsByUserId(int userId);
     boolean deleteCard(int cardId);
+    List<Card> getAllCards();
     
 }
