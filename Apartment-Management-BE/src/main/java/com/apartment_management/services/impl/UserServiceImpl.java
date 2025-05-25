@@ -189,5 +189,9 @@ public class UserServiceImpl implements UserService {
         userRepo.editProfile(user);
         return true;
     }
+    @Override
+    public List<User> findByRole(String role) {
+        return userRepo.findByRole(role);
+    }
 
 }

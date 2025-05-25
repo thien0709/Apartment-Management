@@ -5,7 +5,9 @@ import com.apartment_management.pojo.Invoice;
 import com.apartment_management.services.InvoiceService;
 import com.apartment_management.services.VNPayService;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +26,9 @@ public class VNPayController {
     private InvoiceService invoiceService;
 
     @PostMapping
-    public ResponseEntity<?> createPayment(HttpServletRequest request, @RequestBody PaymentRequest paymentRequest) {
-        int amount = paymentRequest.getAmount();
-        List<Long> items = paymentRequest.getItems();
+    public ResponseEntity<?> createPayment(HttpServletRequest request, @RequestBody Map<String, Object> paymentRequest) {
         String returnUrl = "http://localhost:8080";
-        String response = vnpayService.createOrder(request, amount, "Thanh toan don hang", returnUrl);
+        String response = vnpayService.createOrder(request, paymentRequest, "Thanh toan don hang", returnUrl);
         return ResponseEntity.ok(response);
     }
 
@@ -47,32 +47,35 @@ public class VNPayController {
 //
 //        return ResponseEntity.ok(response);
 //    }
-    @GetMapping("/vnpay-payment-return")
-    public String returnPayment(HttpServletRequest request) {
-        int result = vnpayService.orderReturn(request);
+  @GetMapping("/vnpay-payment-return")
+public String returnPayment(HttpServletRequest request) {
+    int result = vnpayService.orderReturn(request);
+    String orderId = request.getParameter("vnp_TxnRef");
+    String responseCode = request.getParameter("vnp_ResponseCode");
 
-        String orderId = request.getParameter("vnp_TxnRef");
-        String responseCode = request.getParameter("vnp_ResponseCode");
+    System.out.println("result: " + result);
+    System.out.println("orderId: " + orderId);
+    
+    request.getParameterMap().forEach((k, v) -> System.out.println(k + ": " + Arrays.toString(v)));
 
-        System.out.println("orderId" + orderId);
-        if (result == 1 && "00".equals(responseCode)) {
+    if ( "00".equals(responseCode)) {
+        try {
+            List<Integer> invoiceIds = Arrays.stream(orderId.split("-"))
+                                             .map(Integer::parseInt)
+                                             .toList();
 
-            try {
-                Long invoiceId = Long.parseLong(orderId); // Nếu orderId là invoiceId
-//                boolean updated = invoiceService.updateStatusToPaid(invoiceId);
+            invoiceService.updateStatusToPaid(invoiceIds);
+            System.out.println("sucess");
 
-                if (true) {
-                    return "redirect:http://localhost:3000/payment?status=success";
-                } else {
-                    return "redirect:http://localhost:3000/payment?error=update_failed";
-                }
-            } catch (Exception e) {
-                return "redirect:http://localhost:3000/payment?error=invalid_invoice_id";
-            }
-        } else if ("24".equals(responseCode)) {
-            return "redirect:http://localhost:3000/payment?status=cancel";
-        } else {
-            return "redirect:http://localhost:3000/payment?status=fail";
+            return "redirect:http://localhost:3000/payment?status=success";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:http://localhost:3000/payment?error=invalid_invoice_id";
         }
+    } else if ("24".equals(responseCode)) {
+        return "redirect:http://localhost:3000/payment?status=cancel";
+    } else {
+        return "redirect:http://localhost:3000/payment?status=fail";
     }
+}
 }

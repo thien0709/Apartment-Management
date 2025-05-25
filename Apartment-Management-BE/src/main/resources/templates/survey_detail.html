@@ -7,6 +7,7 @@
 <body>
     <div th:replace="base :: header"></div>
     <div class="container mt-4">
+        
         <h2 th:text="'Khảo sát: ' + ${survey.title}">Chi tiết khảo sát</h2>
         <p th:text="'Mô tả: ' + ${survey.description}"></p>
 
@@ -34,8 +35,10 @@
                             <input type="text" name="content" th:value="${question.content}" class="form-control me-2" required />
                             <button type="submit" class="btn btn-primary btn-sm me-1">Sửa</button>
                         </form>
+
                     </td>
                     <td>
+                        <a th:href="@{'/survey-manage/detail/' + ${survey.id}  + '/' +  ${question.id} + '/answers'}" class="btn btn-info btn-sm me-2">Xem câu trả lời</a>
                         <form th:action="@{'/survey-manage/' + ${survey.id} + '/question/delete/' + ${question.id}}" method="post" style="display:inline">
                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Xoá câu hỏi này?')">Xoá</button>
                         </form>

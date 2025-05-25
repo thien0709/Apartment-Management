@@ -16,4 +16,5 @@ public interface ResponseRepository {
     void submitResponse(Response response);
 
     List<Response> getResponses(Integer surveyId, Integer questionId, Integer userId);
+      List<Response> findByQuestionId(Integer questionId);
 }

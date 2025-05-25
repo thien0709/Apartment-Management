@@ -61,6 +61,7 @@ public class ApiFeedbackController {
                 dto.setContent(feedback.getContent());
                 dto.setCreatedAt(feedback.getCreatedAt());
                 dto.setUsername(feedback.getUserId().getUsername());
+                dto.setStatus(feedback.getStatus());
                 return dto;
             }).collect(Collectors.toList());
 
@@ -71,16 +72,32 @@ public class ApiFeedbackController {
     }
 
     @PutMapping("/feedback/{feedbackId}")
-    public Feedback updateFeedBack(
-            @PathVariable(value = "feedbackId") int feedbackId,
-            @RequestBody String content) {
-        return this.feedbackService.updateFeedback(feedbackId, content);
+    public ResponseEntity<Feedback> updateFeedBack(
+            @PathVariable("feedbackId") int feedbackId,
+            @RequestBody FeedbackResponse fb) {
+
+        Feedback updatedFeedback = feedbackService.updateFeedback(feedbackId, fb.getContent());
+
+        if (updatedFeedback != null) {
+            return ResponseEntity.ok(updatedFeedback);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
-    
-      @DeleteMapping("/feedback/{feedbackId}")
-    public void deleteFeedBack(
-            @PathVariable(value = "feedbackId") int feedbackId
-            ) {
-         this.feedbackService.deleteFeedback(feedbackId);
+
+    @DeleteMapping("/feedback/{feedbackId}")
+    public ResponseEntity<Void> deleteFeedBack(@PathVariable("feedbackId") int feedbackId) {
+        try {
+            Feedback f = feedbackService.getFeedBackById(feedbackId);
+            if (f == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            feedbackService.deleteFeedback(feedbackId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
+
 }

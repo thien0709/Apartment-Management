@@ -13,29 +13,29 @@ public class VNPayConfig {
     @Autowired
     private Environment env;
 
-    public static String hashAllFields(Map fields) {
-        List fieldNames = new ArrayList(fields.keySet());
+    public static String hashAllFields(Map<String, String> fields) {
+        List<String> fieldNames = new ArrayList<>(fields.keySet());
         Collections.sort(fieldNames);
         StringBuilder sb = new StringBuilder();
-        Iterator itr = fieldNames.iterator();
-
-        while (itr.hasNext()) {
-            String fieldName = (String) itr.next();
-            String fieldValue = (String) fields.get(fieldName);
+        boolean first = true;
+        for (String fieldName : fieldNames) {
+            String fieldValue = fields.get(fieldName);
             if (fieldValue != null && fieldValue.length() > 0) {
+                if (!first) {
+                    sb.append("&");
+                }
                 sb.append(fieldName).append("=").append(fieldValue);
-            }
-            if (itr.hasNext()) {
-                sb.append("&");
+                first = false;
             }
         }
-
-        return hmacSHA512("FAONAXJYWAKCGIDJDSKFGHIWDRCJQAET", sb.toString());
+        return hmacSHA512("GCX5BZG5ZV7RYHNDGYZAMSEWYLYMUP2A", sb.toString());
     }
 
     public static String hmacSHA512(final String key, final String data) {
         try {
-            if (key == null || data == null) throw new NullPointerException();
+            if (key == null || data == null) {
+                throw new NullPointerException();
+            }
             Mac hmac512 = Mac.getInstance("HmacSHA512");
             byte[] hmacKeyBytes = key.getBytes();
             SecretKeySpec secretKey = new SecretKeySpec(hmacKeyBytes, "HmacSHA512");
