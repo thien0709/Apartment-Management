@@ -67,7 +67,6 @@ function Sidebar() {
                 </Dropdown.Menu>
               </Dropdown>
 
-
               {user ? (
                 <>
                   <Dropdown>

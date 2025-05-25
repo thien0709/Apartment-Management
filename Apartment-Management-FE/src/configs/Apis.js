@@ -5,6 +5,7 @@ const BASE_URL = 'http://localhost:8080/apartment_management/api/';
 
 export const endpoints = {
     'login': '/login',
+    'admins': '/admins',
     'current-user': '/secure/profile',
     'change-password': (userId) => `users/${userId}/change_password`,
     'updateAvatar': (userId) => `/users/${userId}/update_avatar`,
@@ -13,6 +14,8 @@ export const endpoints = {
     'feedback': '/feedback',
     'feedbacks': (userId) => `/feedback/${userId}`,
     'edit-feedback': (feedbackId) => `/feedback/${feedbackId}`,
+    'surveys': '/surveys',
+    'survey-detail': (surveyId) => `/survey/${surveyId}`,
 
 }
 

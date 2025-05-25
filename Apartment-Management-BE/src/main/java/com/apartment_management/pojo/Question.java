@@ -4,6 +4,7 @@
  */
 package com.apartment_management.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,6 +49,7 @@ public class Question implements Serializable {
     @JoinColumn(name = "survey_id", referencedColumnName = "id")
     @ManyToOne
     private Survey surveyId;
+    @JsonIgnore
     @OneToMany(mappedBy = "questionId")
     private Set<Response> responseSet;
 

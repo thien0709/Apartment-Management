@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { MyUserContext } from "../configs/MyContexts";
 import Apis, { endpoints } from "../configs/Apis";
+import { debounce } from "lodash";
 
 const Feedback = () => {
   const user = useContext(MyUserContext);
@@ -97,6 +98,10 @@ const Feedback = () => {
     }
   };
 
+    const handleContentChange = debounce((value) => {
+        setContent(value);
+    }, 300);
+
   return (
     <div className="container py-5">
       <div className="row">
@@ -113,7 +118,7 @@ const Feedback = () => {
                     className="form-control"
                     rows="5"
                     value={content}
-                    onChange={(e) => setContent(e.target.value)}
+                    onChange={(e) => handleContentChange(e.target.value)}
                     placeholder="Nội dung phản ánh"
                     style={{ height: "150px" }}
                     required

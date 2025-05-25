@@ -5,8 +5,10 @@
 package com.apartment_management.controllers;
 
 import com.apartment_management.pojo.Question;
+import com.apartment_management.pojo.Response;
 import com.apartment_management.pojo.Survey;
 import com.apartment_management.services.QuestionService;
+import com.apartment_management.services.ResponseService;
 import com.apartment_management.services.SurveyService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,99 +35,110 @@ public class SurveyController {
     @Autowired
     private QuestionService questionService;
 
-    // Hiển thị danh sách khảo sát
+    @Autowired
+    private ResponseService responseService;
+
     @GetMapping
     public String listSurveys(Model model) {
         List<Survey> surveys = surveyService.getAllSurveys();
         model.addAttribute("surveys", surveys);
         model.addAttribute("title", "Quản lý khảo sát");
-        return "survey_list"; 
+        return "survey_list";
     }
 
-    // Xem chi tiết khảo sát + danh sách câu hỏi
     @GetMapping("/detail/{id}")
     public String surveyDetail(@PathVariable("id") int id, Model model) {
         Survey survey = surveyService.getSurveyById(id);
-        if (survey == null)
+        if (survey == null) {
             return "redirect:/survey-manage";
+        }
 
         List<Question> questions = questionService.getQuestionsBySurveyId(id);
 
         model.addAttribute("survey", survey);
         model.addAttribute("questions", questions);
         model.addAttribute("newQuestion", new Question());
-        return "survey_detail"; 
+        return "survey_detail";
     }
 
-    // Thêm câu hỏi mới
-@PostMapping("/{surveyId}/question/add")
-public String addQuestion(@PathVariable("surveyId") int surveyId,
-                          @RequestParam("content") String content) {
-    questionService.addQuestion(content, surveyId);
-    return "redirect:/survey-manage/detail/" + surveyId;
-}
-
-
-
-    // Sửa nội dung câu hỏi
-    @PostMapping("/{surveyId}/question/edit/{questionId}")
-    public String editQuestion(@PathVariable("surveyId") int surveyId,
-                               @PathVariable("questionId") int questionId,
-                               @ModelAttribute Question question) {
-        questionService.updateQuestion(questionId, question.getContent());
+    @PostMapping("/{surveyId}/question/add")
+    public String addQuestion(@PathVariable("surveyId") int surveyId,
+            @RequestParam("content") String content) {
+        questionService.addQuestion(content, surveyId);
         return "redirect:/survey-manage/detail/" + surveyId;
     }
 
-    // Xoá câu hỏi
+    @PostMapping("/{surveyId}/question/edit/{questionId}")
+    public String editQuestion(@PathVariable("surveyId") int surveyId,
+            @PathVariable("questionId") int questionId,
+            @RequestParam("content") String content) {
+        questionService.updateQuestion(questionId, content);
+        return "redirect:/survey-manage/detail/" + surveyId;
+    }
+
     @PostMapping("/{surveyId}/question/delete/{questionId}")
     public String deleteQuestion(@PathVariable("surveyId") int surveyId,
-                                 @PathVariable("questionId") int questionId) {
+            @PathVariable("questionId") int questionId) {
         questionService.deleteQuestion(questionId);
         return "redirect:/survey-manage/detail/" + surveyId;
     }
 
-    // Hiển thị form tạo khảo sát
-    @GetMapping("/create")
-    public String showCreateForm(Model model) {
-        model.addAttribute("survey", new Survey());
-        model.addAttribute("formTitle", "Tạo khảo sát mới");
-        model.addAttribute("formAction", "/survey-manage/create");
-        return "survey_form"; // => tách riêng file survey_form.html
-    }
-
-    // Xử lý tạo khảo sát
     @PostMapping("/create")
     public String createSurvey(@ModelAttribute Survey survey) {
         surveyService.createSurvey(survey.getTitle(), survey.getDescription());
         return "redirect:/survey-manage";
     }
 
-    // Hiển thị form sửa khảo sát
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable("id") int id, Model model) {
         Survey survey = surveyService.getSurveyById(id);
-        if (survey == null)
+        if (survey == null) {
             return "redirect:/survey-manage";
+        }
 
-        model.addAttribute("survey", survey);
-        model.addAttribute("formTitle", "Chỉnh sửa khảo sát");
-        model.addAttribute("formAction", "/survey-manage/edit/" + id);
-        return "survey_form"; 
+        List<Survey> surveys = surveyService.getAllSurveys();
+        model.addAttribute("surveys", surveys);
+        model.addAttribute("editingSurveyId", id);
+        model.addAttribute("surveyToEdit", survey);
+        return "survey_list";
     }
 
-    // Xử lý cập nhật khảo sát
     @PostMapping("/edit/{id}")
     public String editSurvey(@PathVariable("id") int id,
-                             @ModelAttribute Survey survey) {
+            @ModelAttribute Survey survey) {
         survey.setId(id);
         surveyService.updateSurvey(survey);
         return "redirect:/survey-manage";
     }
 
-    // 10. Xử lý xoá khảo sát
     @PostMapping("/delete/{id}")
     public String deleteSurvey(@PathVariable("id") int id) {
         surveyService.deleteSurvey(id);
         return "redirect:/survey-manage";
     }
+
+    @GetMapping("/detail/{surveyId}/{questionId}/answers")
+    public String viewQuestionAnswers(
+            @PathVariable("surveyId") int surveyId,
+            @PathVariable("questionId") int questionId,
+            Model model) {
+
+        Survey survey = surveyService.getSurveyById(surveyId);
+        Question question = questionService.getQuestionById(questionId);
+
+        if (survey == null || question == null) {
+            return "redirect:/survey-manage";
+        }
+
+        List<Response> answers = responseService.findByQuestionId(questionId);
+
+        System.out.println("Dữ liệu questions: " + answers);
+
+        model.addAttribute("survey", survey);
+        model.addAttribute("question", question);
+        model.addAttribute("answers", answers);
+
+        return "survey_question_answers";
+    }
+
 }
