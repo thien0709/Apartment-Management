@@ -4,8 +4,11 @@
  */
 package com.apartment_management.services.impl;
 
+import com.apartment_management.pojo.Locker;
 import com.apartment_management.pojo.Package;
+import com.apartment_management.repositories.LockerRepository;
 import com.apartment_management.repositories.PackageRepository;
+import com.apartment_management.repositories.UserRepository;
 import com.apartment_management.services.PackageService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,19 +19,28 @@ import org.springframework.stereotype.Service;
  * @author thien
  */
 @Service
-public class PackageServiceImpl implements PackageService{
-    
+public class PackageServiceImpl implements PackageService {
+
     @Autowired
     private PackageRepository packageRepo;
-    
+    @Autowired
+    private LockerRepository lockerRepository;
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
-    public void createPackage(String name, int userId) {
-        this.packageRepo.createPackage(name, userId);
-     }
+    public Package createPackage(String name, int userId) {
+        Locker locker = lockerRepository.getLockerById(userId);
+        if (locker == null) {
+            var user = userRepository.getUserById(userId);
+            lockerRepository.createLocker(user);
+        }
+        return this.packageRepo.createPackage(name, userId);
+    }
 
     @Override
     public List<Package> findByUserId(int userId) {
-       return this.packageRepo.findByUserId(userId);
+        return this.packageRepo.findByUserId(userId);
     }
 
     @Override
@@ -40,10 +52,12 @@ public class PackageServiceImpl implements PackageService{
     public List<Package> findByStatus(String status) {
         return this.packageRepo.findByStatus(status);
     }
+
     @Override
     public Package getPackageById(int packageId) {
         return packageRepo.getPackageById(packageId);
     }
+
     @Override
     public void updatePackageStatus(int packageId, String status) {
         packageRepo.updatePackageStatus(packageId, status);

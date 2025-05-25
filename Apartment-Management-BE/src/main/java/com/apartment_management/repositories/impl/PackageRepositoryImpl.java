@@ -32,7 +32,7 @@ public class PackageRepositoryImpl implements PackageRepository {
     }
 
     @Override
-    public void createPackage(String name, int userId) {
+    public Package createPackage(String name, int userId) {
         Locker locker = this.getCurrentSession().find(Locker.class, userId);
         if (locker != null) {
             Package p = new Package();
@@ -41,7 +41,9 @@ public class PackageRepositoryImpl implements PackageRepository {
             p.setLockerId(locker);
             p.setStatus("PENDING");
             this.getCurrentSession().persist(p);
+            return p;
         }
+        return null;
     }
 
     @Override

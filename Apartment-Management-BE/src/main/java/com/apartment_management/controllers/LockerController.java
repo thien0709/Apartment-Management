@@ -6,9 +6,11 @@ package com.apartment_management.controllers;
 
 import com.apartment_management.pojo.User;
 import com.apartment_management.pojo.Package;
+import com.apartment_management.services.EmailService;
 import com.apartment_management.services.LockerService;
 import com.apartment_management.services.PackageService;
 import com.apartment_management.services.UserService;
+import jakarta.mail.MessagingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,9 @@ public class LockerController {
     @Autowired
     private PackageService packageService;
 
+    @Autowired
+    private EmailService emailService;
+
     // Hiển thị trang quản lý tủ đồ
     @GetMapping
     public String showLockerManagement(Model model) {
@@ -51,11 +56,24 @@ public class LockerController {
     // Xử lý thêm gói hàng mới
     @PostMapping("/add-package")
     public String addPackage(@RequestParam("residentId") int residentId,
-                             @RequestParam("packageName") String packageName,
-                             Model model) {
+            @RequestParam("packageName") String packageName,
+            Model model) {
         try {
-            packageService.createPackage(packageName, residentId);
-            model.addAttribute("successMessage", "Thêm gói hàng thành công!");
+            Package newPackage = packageService.createPackage(packageName, residentId);
+            User resident = userService.getUserById(residentId);
+
+            if (resident != null && resident.getEmail() != null && !resident.getEmail().isEmpty()) {
+                emailService.sendNewPackageNotification(
+                        resident.getEmail(),
+                        packageName,
+                        newPackage.getCreatedAt()
+                );
+                model.addAttribute("successMessage", "Thêm gói hàng và gửi email thông báo thành công!");
+            } else {
+                model.addAttribute("successMessage", "Thêm gói hàng thành công nhưng không gửi được email: Email cư dân không hợp lệ.");
+            }
+        } catch (MessagingException e) {
+            model.addAttribute("errorMessage", "Thêm gói hàng thành công nhưng lỗi khi gửi email: " + e.getMessage());
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Lỗi khi thêm gói hàng: " + e.getMessage());
         }
@@ -65,8 +83,8 @@ public class LockerController {
     // Hiển thị danh sách gói hàng của cư dân
     @GetMapping("/packages/{userId}")
     public String showPackages(@PathVariable("userId") int userId,
-                              @RequestParam(value = "status", required = false) String status,
-                              Model model) {
+            @RequestParam(value = "status", required = false) String status,
+            Model model) {
         List<Package> packages;
         if (status != null && !status.isEmpty()) {
             // Chuyển đổi status từ tiếng Việt sang ENUM
@@ -91,9 +109,9 @@ public class LockerController {
     // Cập nhật trạng thái gói hàng
     @PostMapping("/packages/{packageId}/update-status")
     public String updatePackageStatus(@PathVariable("packageId") int packageId,
-                                      @RequestParam("status") String status,
-                                      @RequestParam("userId") int userId,
-                                      Model model) {
+            @RequestParam("status") String status,
+            @RequestParam("userId") int userId,
+            Model model) {
         try {
             // Chuyển đổi status từ tiếng Việt sang ENUM
             String enumStatus = status.equals("Chờ nhận") ? "PENDING" : "RECEIVED";
@@ -108,8 +126,8 @@ public class LockerController {
     // Xóa gói hàng
     @PostMapping("/packages/{packageId}/delete")
     public String deletePackage(@PathVariable("packageId") int packageId,
-                                @RequestParam("userId") int userId,
-                                Model model) {
+            @RequestParam("userId") int userId,
+            Model model) {
         try {
             packageService.deletePackage(packageId);
             model.addAttribute("successMessage", "Xóa gói hàng thành công!");
