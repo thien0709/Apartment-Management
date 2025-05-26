@@ -17,6 +17,7 @@ const Chat = () => {
       try {
         const res = await Apis.get(endpoints["get-admins"]);
         setAdmins(res.data);
+        console.log("Admins loaded:", res.data);  
       } catch (err) {
         console.error("Lỗi khi tải admin:", err);
       }
