@@ -5,7 +5,7 @@ const BASE_URL = 'http://localhost:8080/apartment_management/api/';
 
 export const endpoints = {
     'login': '/login',
-    'admins': '/admins',
+    'get-admins': '/admins',
     'current-user': '/secure/profile',
     'change-password': (userId) => `users/${userId}/change_password`,
     'updateAvatar': (userId) => `/users/${userId}/update_avatar`,
