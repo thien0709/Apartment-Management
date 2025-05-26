@@ -72,17 +72,33 @@ public class InvoiceRepositoryImpl implements InvoiceRepository {
         return query.getResultList();
     }
 
+//    @Override
+//    public boolean updateStatusToPaid(Invoice invoice, String method) {
+//        if (invoice == null || invoice.getId() == null) {
+//            return false;
+//        }
+//        System.out.println("Payment success");
+//        invoice.setStatus("PAID");
+//        invoice.setPaymentMethod(method);
+//        getCurrentSession().merge(invoice);
+//        
+//        return true;
+//
+//    }
+
     @Override
-    public boolean updateStatusToPaid(Invoice invoice) {
-        if (invoice == null || invoice.getId() == null) {
+    public boolean updatePaymentInfo(Invoice invoice, String method, String paymentProofUrl) {
+         if (invoice == null || invoice.getId() == null) {
             return false;
         }
-        System.out.println("Payment success");
+        invoice.setPaymentMethod(method);
         invoice.setStatus("PAID");
-        getCurrentSession().merge(invoice);
+        if(paymentProofUrl != null){
+            invoice.setPaymentProof(paymentProofUrl);
+        }
         
+        getCurrentSession().merge(invoice);
         return true;
-
-    }
+        }
 
 }

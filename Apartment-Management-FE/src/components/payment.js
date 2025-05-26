@@ -1,171 +1,152 @@
 import { useState, useEffect, useContext } from "react";
-import { Card, Button, Row, Col, Alert, Spinner } from "react-bootstrap";
-import "./styles/payment.css";
+import { Card, Button, Row, Col, Alert, Spinner, Form } from "react-bootstrap";
 import { FaMoneyBillWave, FaQrcode } from "react-icons/fa";
 import Apis, { endpoints } from "../configs/Apis";
 import { MyUserContext } from "../configs/MyContexts";
 import { useLocation } from "react-router-dom";
+import "./styles/payment.css";
 
 const Payment = () => {
+  const { user, token } = useContext(MyUserContext);
+  const location = useLocation();
+
   const [invoices, setInvoices] = useState([]);
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedInvoices, setSelectedInvoices] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("");
-  const [showAlert, setShowAlert] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [paymentLoading, setPaymentLoading] = useState(false);
-  const user = useContext(MyUserContext);
-  // const location = useLocation();
+  const [showAlert, setShowAlert] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPaying, setIsPaying] = useState(false);
+  const [proofFile, setProofFile] = useState(null);
 
-  // useEffect(() => {
-  //   const query = new URLSearchParams(location.search);
-  //   const status = query.get("status");
-  //   const error = query.get("error");
-
-  //   if (status === "success") {
-  //     setPaymentStatus({ type: "success", message: "Thanh toán thành công!" });
-  //     loadInvoices();
-  //   } else if (status === "cancel") {
-  //     setPaymentStatus({ type: "warning", message: "Thanh toán đã bị hủy." });
-  //   } else if (status === "fail") {
-  //     setPaymentStatus({ type: "danger", message: "Thanh toán thất bại." });
-  //   } else if (error) {
-  //     setPaymentStatus({ type: "danger", message: `Lỗi: ${error}` });
-  //   }
-  // }, [location]);
-
-
-  const loadInvoices = async () => {
+  // Load invoices
+  const fetchInvoices = async () => {
+    setIsLoading(true);
     try {
-      setLoading(true);
-      const res = await Apis.get(endpoints["invoices"](user.user?.id), {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
+      const res = await Apis.get(endpoints["invoices"](user?.id), {
+        headers: { Authorization: `Bearer ${token}` },
       });
       setInvoices(res.data);
-    } catch (error) {
-      console.error("Lỗi khi tải danh sách hóa đơn:", error);
+    } catch {
       setPaymentStatus({ type: "danger", message: "Lỗi khi tải hóa đơn." });
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-useEffect(() => {
-  console.log("Loading invoices for user", user.user?.id);
-  loadInvoices();
-}, [user]);
+  // Handle VNPay redirect status
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const status = params.get("status");
 
+    if (status === "success") {
+      setPaymentStatus({ type: "success", message: "Thanh toán thành công qua VNPay!" });
+      fetchInvoices();
+    } else if (status === "cancel") {
+      setPaymentStatus({ type: "warning", message: "Bạn đã hủy thanh toán VNPay." });
+    } else if (status === "fail") {
+      setPaymentStatus({ type: "danger", message: "Thanh toán thất bại. Vui lòng thử lại." });
+    }
+  }, [location.search]);
 
-  const handleItemClick = (id) => {
+  // Initial fetch
+  useEffect(() => {
+    if (user?.id) fetchInvoices();
+  }, [user?.id]);
+
+  const toggleInvoiceSelection = (id) => {
     const invoice = invoices.find((inv) => inv.id === id);
     if (invoice?.status === "PAID") return;
-    setSelectedItems((prev) =>
+
+    setSelectedInvoices((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
-  const handleMethodChange = (method) => {
-    setPaymentMethod(method);
-  };
+  const calculateTotal = () =>
+    invoices
+      .filter((inv) => selectedInvoices.includes(inv.id))
+      .reduce((sum, inv) => sum + inv.totalAmount, 0);
 
-  const handleSubmit = async (e) => {
+  const handlePayment = async (e) => {
     e.preventDefault();
 
-    if (!paymentMethod || selectedItems.length === 0) {
+    if (!paymentMethod || selectedInvoices.length === 0) {
       setShowAlert(true);
       return;
     }
 
     setShowAlert(false);
-    setPaymentLoading(true);
+    setIsPaying(true);
 
-    const selectedInvoices = invoices.filter((inv) =>
-      selectedItems.includes(inv.id)
-    );
-    const totalAmount = selectedInvoices.reduce(
-      (sum, inv) => sum + inv.totalAmount,
-      0
-    );
+    const totalAmount = calculateTotal();
 
     try {
-      if (paymentMethod === "vnpay") {
+      if (paymentMethod === "CASH") {
         const res = await Apis.post(
-          endpoints["payment"],
-          {
-            invoiceId: selectedItems,
-            amount: totalAmount,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          }
+          endpoints["payment-vnpay"],
+          { invoiceId: selectedInvoices, amount: totalAmount },
+          { headers: { Authorization: `Bearer ${token}` } }
         );
-        console.log("Kết quả thanh toán:", res);
-        console.log("URL thanh toán:", res.data);
         window.open(res.data, "_blank");
-      } else {
         setPaymentStatus({
-          type: "info",
-          message: "Thanh toán trực tiếp đã được chọn.",
+          type: "success",
+          message: "Mở VNPay để thanh toán. Hãy kiểm tra trạng thái hóa đơn sau.",
+        });
+      } else if (paymentMethod === "TRANSFER") {
+        const formData = new FormData();
+        selectedInvoices.forEach((id) => formData.append("invoiceId", id));
+        formData.append("method", "TRANSFER");
+        formData.append("file", proofFile);
+
+        await Apis.post(endpoints["payment-banking"], formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        setPaymentStatus({
+          type: "success",
+          message: "Gửi minh chứng thanh toán thành công.",
         });
       }
-    } catch (error) {
-      console.error("Lỗi khi tạo đơn hàng:", error);
-      setPaymentStatus({
-        type: "danger",
-        message: "Có lỗi xảy ra trong quá trình thanh toán.",
-      });
+      // Reset
+      fetchInvoices();
+      setSelectedInvoices([]);
+      setPaymentMethod("");
+      setProofFile(null);
+    } catch {
+      setPaymentStatus({ type: "danger", message: "Lỗi khi xử lý thanh toán." });
     } finally {
-      setPaymentLoading(false);
+      setIsPaying(false);
     }
   };
-
-  const totalAmounts = invoices
-    .filter((item) => selectedItems.includes(item.id))
-    .reduce((sum, item) => sum + item.totalAmount, 0);
 
   return (
     <div className="payment-container">
       <h2 className="text-center mb-4">Thanh toán</h2>
-      {paymentStatus && (
-        <Alert variant={paymentStatus.type}>{paymentStatus.message}</Alert>
-      )}
-      {showAlert && (
-        <Alert variant="danger">
-          Vui lòng chọn phương thức và mục thanh toán.
-        </Alert>
-      )}
 
-      {loading ? (
-        <div className="text-center">
-          <Spinner animation="border" />
-        </div>
+      {paymentStatus && <Alert variant={paymentStatus.type}>{paymentStatus.message}</Alert>}
+      {showAlert && <Alert variant="danger">Vui lòng chọn phương thức và hóa đơn cần thanh toán.</Alert>}
+
+      {isLoading ? (
+        <div className="text-center"><Spinner animation="border" /></div>
       ) : (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handlePayment}>
           <Row className="mb-4">
-            {invoices.map((item) => (
-              <Col md={4} key={item.id}>
+            {invoices.map((inv) => (
+              <Col md={4} key={inv.id}>
                 <Card
-                  className={`payment-card ${
-                    selectedItems.includes(item.id) ? "selected" : ""
-                  } ${item.status === "PAID" ? "disabled" : ""}`}
-                  onClick={() => handleItemClick(item.id)}
+                  className={`payment-card ${selectedInvoices.includes(inv.id) ? "selected" : ""} ${inv.status === "PAID" ? "disabled" : ""}`}
+                  onClick={() => toggleInvoiceSelection(inv.id)}
                 >
                   <Card.Body className="text-center">
-                    <Card.Title>
-                      {item.description || `Hóa đơn #${item.id}`}
-                    </Card.Title>
-                    <Card.Text>
-                      {item.totalAmount.toLocaleString()} VND
-                    </Card.Text>
-                    {item.status === "PAID" ? (
-                      <div className="text-success fw-bold">Đã thanh toán</div>
-                    ) : (
-                      <div className="text-danger fw-bold">Chưa thanh toán</div>
-                    )}
+                    <Card.Title>Hóa đơn #{inv.id}</Card.Title>
+                    <Card.Text>{inv.totalAmount.toLocaleString()} VND</Card.Text>
+                    <div className={inv.status === "PAID" ? "text-success" : "text-danger"}>
+                      {inv.status === "PAID" ? "Đã thanh toán" : "Chưa thanh toán"}
+                    </div>
                   </Card.Body>
                 </Card>
               </Col>
@@ -176,55 +157,55 @@ useEffect(() => {
           <Row className="mb-4">
             <Col md={6}>
               <Card
- Stuart
-                className={`payment-method-card ${
-                  paymentMethod === "direct" ? "selected" : ""
-                }`}
-                onClick={() => handleMethodChange("direct")}
+                className={`payment-method-card ${paymentMethod === "TRANSFER" ? "selected" : ""}`}
+                onClick={() => setPaymentMethod("TRANSFER")}
               >
                 <Card.Body className="text-center">
-                  <div className="icon">
-                    <FaMoneyBillWave />
-                  </div>
-                  <Card.Title>Trực tiếp</Card.Title>
+                  <FaQrcode size={32} />
+                  <Card.Title>Chuyển khoản MOMO</Card.Title>
                 </Card.Body>
               </Card>
             </Col>
             <Col md={6}>
               <Card
-                className={`payment-method-card ${
-                  paymentMethod === "vnpay" ? "selected" : ""
-                }`}
-                onClick={() => handleMethodChange("vnpay")}
+                className={`payment-method-card ${paymentMethod === "CASH" ? "selected" : ""}`}
+                onClick={() => setPaymentMethod("CASH")}
               >
                 <Card.Body className="text-center">
-                  <div className="icon">
-                    <FaQrcode />
-                  </div>
+                  <FaMoneyBillWave size={32} />
                   <Card.Title>VNPay</Card.Title>
                 </Card.Body>
               </Card>
             </Col>
           </Row>
 
-          <h5>Tổng cộng: {totalAmounts.toLocaleString()} VND</h5>
+          {paymentMethod === "TRANSFER" && (
+            <div className="mb-4">
+              <h5>Số MOMO để chuyển khoản:</h5>
+              <p className="momo-number">0988 123 456</p>
+              <Form.Group>
+                <Form.Label>Minh chứng chuyển khoản (ảnh):</Form.Label>
+                <Form.Control
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setProofFile(e.target.files[0])}
+                />
+              </Form.Group>
+              {proofFile && <p className="text-info">Ảnh đã chọn: {proofFile.name}</p>}
+            </div>
+          )}
+
+          <h5>Tổng cộng: {calculateTotal().toLocaleString()} VND</h5>
 
           <Button
-            variant="primary"
             type="submit"
+            variant="primary"
             className="mt-3 w-100"
-            disabled={paymentLoading}
+            disabled={isPaying}
           >
-            {paymentLoading ? (
+            {isPaying ? (
               <>
-                <Spinner
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />{" "}
-                Đang xử lý...
+                <Spinner animation="border" size="sm" /> Đang xử lý...
               </>
             ) : (
               "Thanh toán"
