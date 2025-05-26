@@ -23,5 +23,6 @@ public interface InvoiceRepository {
 
     void deleteInvoice(Integer id);
 
-    boolean updateStatusToPaid(Invoice invoice);
+//    boolean updateStatusToPaid(Invoice invoice, String method);
+   boolean updatePaymentInfo(Invoice invoice, String method, String paymentProofUrl);
 }

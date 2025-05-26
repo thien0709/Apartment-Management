@@ -8,17 +8,24 @@ import com.apartment_management.pojo.DetailInvoice;
 import com.apartment_management.pojo.Invoice;
 import java.util.List;
 import java.util.Set;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
  * @author ADMIN
  */
 public interface InvoiceService {
+
     Invoice createInvoice(Invoice invoice, Set<DetailInvoice> detailInvoices);
+
     List<Invoice> findAll();
+
     Invoice findById(Integer id);
+
     List<Invoice> getInvoicesByUserId(int userId);
-    void updateStatusToPaid(List<Integer> invoiceIds);
+
+    void updatePaymentInfo(List<Integer> invoiceIds, String method, MultipartFile proofImage);
+
     boolean deleteInvoice(Integer id);
-    
+
 }

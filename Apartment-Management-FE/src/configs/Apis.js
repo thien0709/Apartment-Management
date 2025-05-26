@@ -10,7 +10,8 @@ export const endpoints = {
     'change-password': (userId) => `users/${userId}/change_password`,
     'updateAvatar': (userId) => `/users/${userId}/update_avatar`,
     'invoices': (userId) => `/invoices/${userId}`,
-    'payment': '/payment',
+    'payment-vnpay': '/payment/vnpay',
+    'payment-banking': '/payment/banking',
     'feedback': '/feedback',
     'feedbacks': (userId) => `/feedback/${userId}`,
     'edit-feedback': (feedbackId) => `/feedback/${feedbackId}`,
@@ -21,7 +22,7 @@ export const endpoints = {
 
 export const authApis = (token = null) => {
     if (!token) {
-        token = cookie.load('token'); // fallback nếu không truyền từ props
+        token = cookie.load('token');
     }
 
     return axios.create({
