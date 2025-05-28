@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -42,6 +43,9 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 public class SpringSecurityConfigs {
 
     @Autowired
+    private Environment env;
+
+    @Autowired
     private UserDetailsService userDetailsService;
 
     @Bean
@@ -63,11 +67,11 @@ public class SpringSecurityConfigs {
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000","http://localhost:8080")); 
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8080"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(true); 
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -82,7 +86,7 @@ public class SpringSecurityConfigs {
                 .authorizeHttpRequests(requests
                         -> requests
                         .requestMatchers("/", "/home").permitAll()
-                        .requestMatchers("/receive-package/**","/register","/manage-user/**","/invoices").authenticated()
+                        .requestMatchers("/receive-package/**", "/register", "/manage-user/**", "/invoices").authenticated()
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
@@ -103,9 +107,9 @@ public class SpringSecurityConfigs {
     public Cloudinary cloudinary() {
         Cloudinary cloudinary
                 = new Cloudinary(ObjectUtils.asMap(
-                        "cloud_name", "dzwsdpjgi",
-                        "api_key", "693865187219449",
-                        "api_secret", "PtxvcgqYO2dZs7RDWJeNc2DA5Ew",
+                        "cloud_name", env.getProperty("cloudinary.cloud_name"),
+                        "api_key", env.getProperty("cloudinary.api_key"),
+                        "api_secret", env.getProperty("cloudinary.api_secret"),
                         "secure", true));
         return cloudinary;
     }
