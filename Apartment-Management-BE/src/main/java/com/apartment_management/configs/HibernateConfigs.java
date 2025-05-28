@@ -23,7 +23,6 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
  */
 @Configuration
 @PropertySource("classpath:application.properties")
-@PropertySource("classpath:mail.properties")
 public class HibernateConfigs {
 
     @Autowired

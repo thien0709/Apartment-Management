@@ -5,8 +5,9 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
 const Card = () => {
-  const user = useContext(MyUserContext); // Lấy thông tin người dùng từ context
-  const navigate = useNavigate();
+  const user = useContext(MyUserContext); 
+  console.log("User context:", user);
+  const navigator = useNavigate();
   const [userId, setUserId] = useState(null);
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,10 +20,8 @@ const Card = () => {
 
   // Điều hướng đến /login nếu chưa đăng nhập
   useEffect(() => {
-    if (!user) {
-      navigate("/login", { replace: true });
-    }
-  }, [user, navigate]);
+    if (!user.user?.id) navigator("/login");
+  }, [user.user?.id]);
 
   // Lấy userId từ endpoint current-user
   useEffect(() => {
@@ -68,7 +67,7 @@ const Card = () => {
     e.preventDefault();
     if (!user) {
       alert("Vui lòng đăng nhập để tạo thẻ xe!");
-      navigate("/login", { replace: true });
+      navigator("/login", { replace: true });
       return;
     }
 
@@ -107,7 +106,7 @@ const Card = () => {
         }
       } else if (err.response && err.response.status === 401) {
         errorMessage = "Tạo thẻ không thành công: Vui lòng đăng nhập lại.";
-        navigate("/login", { replace: true });
+        navigator("/login", { replace: true });
       }
       alert(errorMessage);
     }
@@ -116,7 +115,7 @@ const Card = () => {
   const handleDeleteCard = async (cardId) => {
     if (!user) {
       alert("Vui lòng đăng nhập để xóa thẻ xe!");
-      navigate("/login", { replace: true });
+      navigator("/login", { replace: true });
       return;
     }
 
@@ -140,7 +139,7 @@ const Card = () => {
           errorMessage = "Thẻ xe không tồn tại.";
         } else if (err.response.status === 401) {
           errorMessage = "Vui lòng đăng nhập lại.";
-          navigate("/login", { replace: true });
+          navigator("/login", { replace: true });
         } else if (err.response.data && err.response.data.message) {
           errorMessage = `Xóa thẻ không thành công: ${err.response.data.message}`;
         }
