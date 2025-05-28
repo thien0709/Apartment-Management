@@ -11,7 +11,7 @@ import java.util.List;
  * @author thien
  */
 public interface PackageRepository {
-    void createPackage(String name, int userId);
+    Package createPackage(String name, int userId);
     List<Package> findByUserId(int userId);
     List<Package> findByUserIdAndStatus(int userId,String status);
     List<Package> findByStatus(String status);

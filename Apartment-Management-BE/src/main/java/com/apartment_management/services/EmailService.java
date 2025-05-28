@@ -4,16 +4,13 @@
  */
 package com.apartment_management.services;
 
-import com.apartment_management.pojo.Card;
-import java.util.List;
+import jakarta.mail.MessagingException;
+import java.util.Date;
 
 /**
  *
- * @author thien
+ * @author ADMIN
  */
-public interface CardService {
-    Card addCard(Card card);
-    List<Card> getCardsByUserId(int userId);
-    boolean deleteCard(int cardId);
-    List<Card> getAllCards();
+public interface EmailService {
+    void sendNewPackageNotification(String recipientEmail, String packageName, Date createdAt) throws MessagingException;
 }

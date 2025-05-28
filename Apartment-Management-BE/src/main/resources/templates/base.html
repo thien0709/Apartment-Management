@@ -64,8 +64,11 @@
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false" th:text="#{nav.feature}">Feature</a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                              
                                 <li><a class="dropdown-item" th:href="@{/manage-user}" th:text="#{nav.manageUser}">Manage User</a></li>
                                 <li><a class="dropdown-item" th:href="@{/invoices}" th:text="#{nav.invoices}">Invoice</a></li>
+                                <li><a class="dropdown-item" th:href="@{/receive-package}">Receive Package</a></li>
+                                <li><a class="dropdown-item" th:href="@{/card/list-card}">Cards</a></li>
                                 <li><a class="dropdown-item" th:href="@{/receive-package}" th:text="#{nav.receivePackage}">Receive Package</a></li>
                                 <li><a class="dropdown-item" th:href="@{/room-manage}" th:text="#{nav.roomManage}">Room Manage</a></li>
                                 <li><a class="dropdown-item" th:href="@{/survey-manage}" th:text="#{nav.surveyManage}">Survey Manage</a></li>
@@ -78,9 +81,6 @@
                         </li>
                         <li class="nav-item" sec:authorize="isAuthenticated()">
                             <a class="nav-link" th:href="@{/logout}" th:text="#{nav.logout}">Log out</a>
-                        </li>
-                        <li class="nav-item" sec:authorize="isAuthenticated()">
-                            <a class="nav-link" th:href="@{/register}" th:text="#{nav.addUser}">Add User</a>
                         </li>
                     </ul>
                 </div>

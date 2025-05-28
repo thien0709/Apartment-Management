@@ -72,6 +72,10 @@ function Sidebar() {
                   <Dropdown.Item onClick={handleChat}>Nhắn tin</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
+            <Nav className="justify-content-end flex-grow-1 pe-3" style={{ alignItems: "center" }}>
+              <Link to="/" className="nav-link">Trang chủ</Link>
+              <Link to="/payment" className="nav-link">Thanh toán</Link>
+              <Link to="/card" className="nav-link">Thẻ xe</Link>
 
               {user ? (
                 <>

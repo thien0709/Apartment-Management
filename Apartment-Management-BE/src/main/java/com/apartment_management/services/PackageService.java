@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface PackageService {
 
-    void createPackage(String name, int userId);
+    Package createPackage(String name, int userId);
 
     List<Package> findByUserId(int userId);
 

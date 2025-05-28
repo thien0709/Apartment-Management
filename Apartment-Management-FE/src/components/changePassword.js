@@ -16,7 +16,7 @@ function ChangePassword({ userId: propUserId, token }) {
                 try {
                     const api = authApis();
                     const response = await api.get(endpoints['current-user']);
-                    setUserId(response.data.id); // Giả sử API trả về { id: 5, ... }
+                    setUserId(response.data.id); 
                 } catch (error) {
                     console.error('Error fetching user ID:', error);
                     setMessage('Không thể lấy thông tin người dùng!');

@@ -69,7 +69,7 @@ public class UserRepositoryImpl implements UserRepository {
         q.setParameter("username", username);
         User u = (User) q.getSingleResult();
 
-        if (u != null && u.getRole().equals("RESIDENT") && this.passwordEncoder.matches(password, u.getPassword())) {
+        if (u != null && u.getRole().equals("RESIDENT") && u.getIsActive()==true && this.passwordEncoder.matches(password, u.getPassword())) {
             return u;
         } else {
             return null; // Nếu đăng nhập thất bại, trả về null
@@ -101,9 +101,10 @@ public class UserRepositoryImpl implements UserRepository {
         CriteriaQuery<User> q = b.createQuery(User.class);
         Root root = q.from(User.class);
         q.select(root);
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(b.equal(root.get("isActive"), true));
 
         if (params != null) {
-            List<Predicate> predicates = new ArrayList<>();
 
             String kw = params.get("kw");
             if (kw != null && !kw.isEmpty()) {
@@ -142,6 +143,30 @@ public class UserRepositoryImpl implements UserRepository {
         Session session = this.factory.getObject().getCurrentSession();
         Query query = session.createNamedQuery("User.findByRole", User.class);
         query.setParameter("role", role);
+        return query.getResultList();
+    }
+    
+    @Override
+    public List<Object[]> getUserStatsByPeriod(String period, int year) {
+        Session session = factory.getObject().getCurrentSession();
+        String hql;
+        switch (period.toLowerCase()) {
+            case "month":
+                hql = "SELECT MONTH(u.createdAt), COUNT(u) FROM User u WHERE YEAR(u.createdAt) = :year GROUP BY MONTH(u.createdAt)";
+                break;
+            case "quarter":
+                hql = "SELECT QUARTER(u.createdAt), COUNT(u) FROM User u WHERE YEAR(u.createdAt) = :year GROUP BY QUARTER(u.createdAt)";
+                break;
+            case "year":
+                hql = "SELECT YEAR(u.createdAt), COUNT(u) FROM User u GROUP BY YEAR(u.createdAt)";
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid period: " + period);
+        }
+        Query query = session.createQuery(hql);
+        if (!period.equalsIgnoreCase("year")) {
+            query.setParameter("year", year);
+        }
         return query.getResultList();
     }
 

@@ -16,6 +16,7 @@ import Apis, { endpoints } from "./configs/Apis";
 import SurveyDetail from "./components/surveyDetail";
 import SurveyList from "./components/surveyList";
 import Chat from "./components/chat";
+import Card from './components/card';
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function AppRoutes() {
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/update-avatar" element={<UploadAvatar />} />
+            <Route path='/card' element={<Card/>} />
           <Route path="/survey" element={<SurveyList />} />
           <Route path="/survey/:surveyId" element={<SurveyDetail />} />
           <Route path="/chats" element={<Chat />} />

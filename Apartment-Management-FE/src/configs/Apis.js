@@ -17,7 +17,8 @@ export const endpoints = {
     'edit-feedback': (feedbackId) => `/feedback/${feedbackId}`,
     'surveys': '/surveys',
     'survey-detail': (surveyId) => `/survey/${surveyId}`,
-
+    'create-Card' : '/card/create',
+    'delete-card' : (cardId) => `/card/delete/${cardId}`
 }
 
 export const authApis = (token = null) => {
