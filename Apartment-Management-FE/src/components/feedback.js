@@ -2,9 +2,11 @@ import { useEffect, useState, useContext } from "react";
 import { MyUserContext } from "../configs/MyContexts";
 import Apis, { endpoints } from "../configs/Apis";
 import { debounce } from "lodash";
+import { useNavigate } from "react-router-dom";
 
 const Feedback = () => {
   const user = useContext(MyUserContext);
+  const navigator = useNavigate();
   const [content, setContent] = useState("");
   const [feedbacks, setFeedbacks] = useState([]);
   const [editingId, setEditingId] = useState(null);
@@ -24,6 +26,7 @@ const Feedback = () => {
   };
 
   useEffect(() => {
+    if (!user.user?.id) navigator("/login");
     if (user.user?.id) loadFeedbacks();
   }, [user.user?.id]);
 

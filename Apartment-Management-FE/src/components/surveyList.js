@@ -1,11 +1,12 @@
 import { useState, useEffect, use, useContext} from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Apis, { endpoints } from "../configs/Apis";
 import { MyUserContext } from "../configs/MyContexts";
 
 const SurveyList = () => {
   const [surveys, setSurveys] = useState([]);
   const user = useContext(MyUserContext);
+  const navigator = useNavigate();
 
   const loadSurveys = async () => {
     try {
@@ -17,6 +18,7 @@ const SurveyList = () => {
   } ;
 
   useEffect(() => {
+    if(!user.id) navigator("/login");
     loadSurveys();
   }, [user.id]);
 
