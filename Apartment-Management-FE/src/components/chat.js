@@ -3,6 +3,7 @@ import Apis, { endpoints } from "../configs/Apis";
 import { MyUserContext } from "../configs/MyContexts";
 import { database } from "../configs/firebase";
 import { ref, onValue, push } from "firebase/database";
+import { useNavigate } from "react-router-dom";
 
 const Chat = () => {
   const user = useContext(MyUserContext).user;
@@ -10,9 +11,13 @@ const Chat = () => {
   const [selectedAdmin, setSelectedAdmin] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMsg, setNewMsg] = useState("");
+  const navigator = useNavigate();
+
+
 
 
   useEffect(() => {
+    if (!user) navigator("/login");
     const fetchAdmins = async () => {
       try {
         const res = await Apis.get(endpoints["get-admins"]);

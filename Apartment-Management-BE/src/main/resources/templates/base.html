@@ -65,12 +65,12 @@
                                data-bs-toggle="dropdown" aria-expanded="false" th:text="#{nav.feature}">Feature</a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <li><a class="dropdown-item" th:href="@{/manage-user}" th:text="#{nav.manageUser}">Manage User</a></li>
-                                <li><a class="dropdown-item" th:href="@{/feedback-process}" th:text="#{nav.feedbackProcess}">Feedback Process</a></li>
                                 <li><a class="dropdown-item" th:href="@{/invoices}" th:text="#{nav.invoices}">Invoice</a></li>
                                 <li><a class="dropdown-item" th:href="@{/receive-package}" th:text="#{nav.receivePackage}">Receive Package</a></li>
                                 <li><a class="dropdown-item" th:href="@{/room-manage}" th:text="#{nav.roomManage}">Room Manage</a></li>
                                 <li><a class="dropdown-item" th:href="@{/survey-manage}" th:text="#{nav.surveyManage}">Survey Manage</a></li>
                                 <li><a class="dropdown-item" th:href="@{/feedbacks}" th:text="#{nav.feedbacksManage}">Feedbacks Manage</a></li>
+                                <li><a class="dropdown-item" th:href="@{/chats}" th:text="#{nav.chat}">Chat</a></li>
                             </ul>
                         </li>
                         <li class="nav-item" sec:authorize="!isAuthenticated()">

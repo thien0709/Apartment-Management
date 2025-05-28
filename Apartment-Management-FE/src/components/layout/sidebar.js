@@ -31,6 +31,7 @@ function Sidebar() {
   const handlePayment = () => navigate("/payment");
   const handleFeedback = () => navigate("/feedback");
   const handleSurvey = () => navigate("/survey");
+  const handleChat = () => navigate("/chats");
 
   return (
     <Navbar expand="lg" className="bg-body-tertiary mb-3">
@@ -61,9 +62,14 @@ function Sidebar() {
                   Chức năng
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item onClick={handlePayment}>Thanh toán</Dropdown.Item>
-                  <Dropdown.Item onClick={handleFeedback}>Phản ánh</Dropdown.Item>
+                  <Dropdown.Item onClick={handlePayment}>
+                    Thanh toán
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleFeedback}>
+                    Phản ánh
+                  </Dropdown.Item>
                   <Dropdown.Item onClick={handleSurvey}>Khảo sát</Dropdown.Item>
+                  <Dropdown.Item onClick={handleChat}>Nhắn tin</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
 
