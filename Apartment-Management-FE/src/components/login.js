@@ -58,9 +58,15 @@ const Login = () => {
           payload: profileRes.data,
         });
       }
-
-      // Chuyển về trang chủ
-      nav("/");
+      console.log(" công:", profileRes.data.avatarUrl);
+      if (profileRes.data.avatarUrl ==="https://res.cloudinary.com/dzwsdpjgi/image/upload/v1748436782/avatar_trang_1_cd729c335b_aiu2nl.jpg") {
+        nav("/update-avatar");
+        console.log("Chuyển hướng đến trang cập nhật avatar");
+      }
+      else{
+        console.log("Đăng nhập thành công:", profileRes.data);
+        nav("/");
+      }
     } catch (err) {
       const errorData = err.response?.data;
       if (errorData && typeof errorData === "object") {
