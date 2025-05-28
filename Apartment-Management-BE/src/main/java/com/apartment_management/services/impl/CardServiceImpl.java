@@ -30,7 +30,7 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public Card addCard(Card card) {
-        if (userRepo.getUserById(card.getUserId().getId()) != null) {
+        if (userRepo.getUserById(card.getUserId().getId()) != null ) {
             card.setStatus("active");
             card.setIssueDate(new Date());
             Calendar cal = Calendar.getInstance();

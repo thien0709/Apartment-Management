@@ -159,7 +159,7 @@ public class UserController {
 
         // Xóa trạng thái form sau khi đăng ký thành công
         session.removeAttribute("registerFormData");
-        return "redirect:/login";
+        return "redirect:/manage-user";
     }
 
     @GetMapping("/manage-user")

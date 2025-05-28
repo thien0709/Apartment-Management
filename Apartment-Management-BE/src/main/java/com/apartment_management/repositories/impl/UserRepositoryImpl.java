@@ -69,7 +69,7 @@ public class UserRepositoryImpl implements UserRepository {
         q.setParameter("username", username);
         User u = (User) q.getSingleResult();
 
-        if (u != null && u.getRole().equals("RESIDENT") && this.passwordEncoder.matches(password, u.getPassword())) {
+        if (u != null && u.getRole().equals("RESIDENT") && u.getIsActive()==true && this.passwordEncoder.matches(password, u.getPassword())) {
             return u;
         } else {
             return null; // Nếu đăng nhập thất bại, trả về null
@@ -101,9 +101,10 @@ public class UserRepositoryImpl implements UserRepository {
         CriteriaQuery<User> q = b.createQuery(User.class);
         Root root = q.from(User.class);
         q.select(root);
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(b.equal(root.get("isActive"), true));
 
         if (params != null) {
-            List<Predicate> predicates = new ArrayList<>();
 
             String kw = params.get("kw");
             if (kw != null && !kw.isEmpty()) {

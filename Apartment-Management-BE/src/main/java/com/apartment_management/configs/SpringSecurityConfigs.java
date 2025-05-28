@@ -86,7 +86,7 @@ public class SpringSecurityConfigs {
                 .authorizeHttpRequests(requests
                         -> requests
                         .requestMatchers("/", "/home").permitAll()
-                        .requestMatchers("/receive-package/**","/register","/manage-user/**","/invoices").authenticated()
+                        .requestMatchers("/receive-package/**","/register","/manage-user/**","/invoices","/statistics").authenticated()
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
