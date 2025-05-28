@@ -3,12 +3,13 @@ import { Card, Button, Row, Col, Alert, Spinner, Form } from "react-bootstrap";
 import { FaMoneyBillWave, FaQrcode } from "react-icons/fa";
 import Apis, { endpoints } from "../configs/Apis";
 import { MyUserContext } from "../configs/MyContexts";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./styles/payment.css";
 
 const Payment = () => {
   const { user, token } = useContext(MyUserContext);
   const location = useLocation();
+  const navigator = useNavigate();
 
   const [invoices, setInvoices] = useState([]);
   const [selectedInvoices, setSelectedInvoices] = useState([]);
@@ -51,6 +52,7 @@ const Payment = () => {
 
   // Initial fetch
   useEffect(() => {
+    if (!user?.id) navigator("/login");
     if (user?.id) fetchInvoices();
   }, [user?.id]);
 

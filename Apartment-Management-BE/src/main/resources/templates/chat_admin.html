@@ -1,187 +1,193 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Admin Chat</title>
+    <head>
+        <title>Admin Chat</title>
     <th:block th:replace="base :: bootstrap"></th:block>
     <style>
-      .list-group-item.active {
-        background-color: #0d6efd;
-        color: white;
-      }
+        .list-group-item.active {
+            background-color: #0d6efd;
+            color: white;
+        }
     </style>
 </head>
 <body>
 
-<div th:replace="base :: header"></div>
+    <div th:replace="base :: header"></div>
 
-<div class="container-fluid my-5">
-    <input type="hidden" id="adminId" th:value="${admin.id}" />
-    
-    <div id="firebase-config" th:data-apikey="${firebaseApiKey}"></div>
+    <div class="container-fluid my-5">
+        <input type="hidden" id="adminId" th:value="${admin.id}" />
 
-    <div class="row" style="height: 80vh;">
- 
-        <div class="col-md-4 border-end overflow-auto">
-            <h5 class="mt-3">Danh sách Người dùng</h5>
-            <ul id="user-list" class="list-group">
-              
-            </ul>
-        </div>
+        <div id="firebase-config" th:data-apikey="${firebaseApiKey}"></div>
 
-    
-        <div class="col-md-8 d-flex flex-column">
-            <div id="chat-header" class="border-bottom py-2 px-3 bg-light">
-                <strong>Chat với: <span id="chat-with">Chưa chọn người dùng</span></strong>
+        <div class="row" style="height: 80vh;">
+
+            <div class="col-md-4 border-end overflow-auto">
+                <h5 class="mt-3">Danh sách Người dùng</h5>
+                <ul id="user-list" class="list-group">
+
+                </ul>
             </div>
 
-            <div id="chat-box" class="flex-grow-1 overflow-auto p-3" style="background-color: #f8f9fa;">
-              
-            </div>
 
-            <div id="chat-input-area" class="p-3 border-top" style="display:none;">
-                <div class="input-group">
-                    <input type="text" id="msg-input" class="form-control" placeholder="Nhập tin nhắn...">
-                    <button class="btn btn-primary" id="send-btn">Gửi</button>
+            <div class="col-md-8 d-flex flex-column" style="height: 80vh;">
+
+                <div id="chat-header" class="border-bottom py-2 px-3 bg-light">
+                    <strong>Chat với: <span id="chat-with">Chưa chọn người dùng</span></strong>
+                </div>
+
+                <div id="chat-box" class="flex-grow-1 overflow-auto p-3" style="background-color: #f8f9fa;">
+
+                </div>
+
+                <div id="chat-input-area" class="p-3 border-top" style="display:none;">
+                    <div class="input-group">
+                        <input type="text" id="msg-input" class="form-control" placeholder="Nhập tin nhắn...">
+                        <button class="btn btn-primary" id="send-btn">Gửi</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div th:replace="base :: footer"></div>
+    <div th:replace="base :: footer"></div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-const firebaseApiKey = document.getElementById("firebase-config").dataset.apikey;
+        const firebaseApiKey = document.getElementById("firebase-config").dataset.apikey;
 
-const firebaseConfig = {
-    apiKey: firebaseApiKey,
-    authDomain: "apartment-management-aff89.firebaseapp.com",
-    databaseURL: "https://apartment-management-aff89-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "apartment-management-aff89",
-    storageBucket: "apartment-management-aff89.appspot.com",
-    messagingSenderId: "227248654795",
-    appId: "1:227248654795:web:d54b6591f31fee8ac38e4e",
-    measurementId: "G-EPN8VZ6N6K"
-};
+        const firebaseConfig = {
+            apiKey: firebaseApiKey,
+            authDomain: "apartment-management-aff89.firebaseapp.com",
+            databaseURL: "https://apartment-management-aff89-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "apartment-management-aff89",
+            storageBucket: "apartment-management-aff89.appspot.com",
+            messagingSenderId: "227248654795",
+            appId: "1:227248654795:web:d54b6591f31fee8ac38e4e",
+            measurementId: "G-EPN8VZ6N6K"
+        };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-const adminId = document.getElementById("adminId").value;
-const userList = document.getElementById("user-list");
-const chatBox = document.getElementById("chat-box");
-const chatWith = document.getElementById("chat-with");
-const chatInputArea = document.getElementById("chat-input-area");
-const msgInput = document.getElementById("msg-input");
-const sendBtn = document.getElementById("send-btn");
+        const adminId = document.getElementById("adminId").value;
+        const userList = document.getElementById("user-list");
+        const chatBox = document.getElementById("chat-box");
+        const chatWith = document.getElementById("chat-with");
+        const chatInputArea = document.getElementById("chat-input-area");
+        const msgInput = document.getElementById("msg-input");
+        const sendBtn = document.getElementById("send-btn");
 
-let selectedUserId = null;
-let selectedUserName = null;
-let chatUnsubscribe = null;
+        let selectedUserId = null;
+        let selectedUserName = null;
+        let chatUnsubscribe = null;
 
-async function getUserNameById(userId) {
-    try {
-        const response = await fetch(`http://localhost:8080/apartment_management/api/users/${userId}`);
-        if (!response.ok) throw new Error("Không tìm thấy người dùng");
-        const data = await response.json();
-        return data.fullName || userId;
-    } catch (e) {
-        console.error(`Lỗi lấy tên người dùng ${userId}:`, e);
-        return userId;
-    }
-}
-
-async function loadChatUsers() {
-    const chatsRef = ref(db, 'chats');
-    onValue(chatsRef, async (snapshot) => {
-        const data = snapshot.val() || {};
-        userList.innerHTML = "";
-
-        for (const chatKey of Object.keys(data)) {
-            if (chatKey.endsWith(`_${adminId}`)) {
-                const userId = chatKey.split('_')[0];
-                const li = document.createElement("li");
-                li.className = "list-group-item list-group-item-action";
-                li.style.cursor = "pointer";
-
-                const fullName = await getUserNameById(userId);
-                li.textContent = fullName;
-                li.dataset.userId = userId;
-
-                if (userId === selectedUserId) {
-                    li.classList.add("active");
-                }
-
-                li.onclick = () => {
-                    if (selectedUserId === userId) return;
-
-                 
-                    const prevActive = userList.querySelector(".active");
-                    if (prevActive) prevActive.classList.remove("active");
-
-                    li.classList.add("active");
-
-                    selectedUserId = userId;
-                    selectedUserName = fullName;
-                    chatWith.textContent = fullName;
-                    chatInputArea.style.display = "block";
-
-                    loadChat(userId);
-                };
-
-                userList.appendChild(li);
+        async function getUserNameById(userId) {
+            try {
+                const response = await fetch(`http://localhost:8080/apartment_management/api/users/${userId}`);
+                if (!response.ok)
+                    throw new Error("Không tìm thấy người dùng");
+                const data = await response.json();
+                return data.fullName || userId;
+            } catch (e) {
+                console.error(`Lỗi lấy tên người dùng ${userId}:`, e);
+                return userId;
             }
         }
-    });
-}
 
-function loadChat(userId) {
-    if (chatUnsubscribe) chatUnsubscribe();
+        async function loadChatUsers() {
+            const chatsRef = ref(db, 'chats');
+            onValue(chatsRef, async (snapshot) => {
+                const data = snapshot.val() || {};
+                userList.innerHTML = "";
 
-    chatBox.innerHTML = "";
-    const chatId = `${userId}_${adminId}`;
-    const chatRef = ref(db, `chats/${chatId}`);
+                for (const chatKey of Object.keys(data)) {
+                    if (chatKey.endsWith(`_${adminId}`)) {
+                        const userId = chatKey.split('_')[0];
+                        const li = document.createElement("li");
+                        li.className = "list-group-item list-group-item-action";
+                        li.style.cursor = "pointer";
 
-    chatUnsubscribe = onValue(chatRef, (snapshot) => {
-        const data = snapshot.val() || {};
-        chatBox.innerHTML = "";
-        Object.values(data).forEach(msg => {
-            const div = document.createElement("div");
-            div.className = `mb-2 ${msg.senderId === adminId ? 'text-end' : 'text-start'}`;
-            const span = document.createElement("span");
-            span.className = `d-inline-block p-2 rounded ${msg.senderId === adminId ? 'bg-primary text-white' : 'bg-light'}`;
-            span.textContent = msg.content;
-            div.appendChild(span);
-            chatBox.appendChild(div);
+                        const fullName = await getUserNameById(userId);
+                        li.textContent = fullName;
+                        li.dataset.userId = userId;
+
+                        if (userId === selectedUserId) {
+                            li.classList.add("active");
+                        }
+
+                        li.onclick = () => {
+                            if (selectedUserId === userId)
+                                return;
+
+
+                            const prevActive = userList.querySelector(".active");
+                            if (prevActive)
+                                prevActive.classList.remove("active");
+
+                            li.classList.add("active");
+
+                            selectedUserId = userId;
+                            selectedUserName = fullName;
+                            chatWith.textContent = fullName;
+                            chatInputArea.style.display = "block";
+
+                            loadChat(userId);
+                        };
+
+                        userList.appendChild(li);
+                    }
+                }
+            });
+        }
+
+        function loadChat(userId) {
+            if (chatUnsubscribe)
+                chatUnsubscribe();
+
+            chatBox.innerHTML = "";
+            const chatId = `${userId}_${adminId}`;
+            const chatRef = ref(db, `chats/${chatId}`);
+
+            chatUnsubscribe = onValue(chatRef, (snapshot) => {
+                const data = snapshot.val() || {};
+                chatBox.innerHTML = "";
+                Object.values(data).forEach(msg => {
+                    const div = document.createElement("div");
+                    div.className = `mb-2 ${msg.senderId === adminId ? 'text-end' : 'text-start'}`;
+                    const span = document.createElement("span");
+                    span.className = `d-inline-block p-2 rounded ${msg.senderId === adminId ? 'bg-primary text-white' : 'bg-light'}`;
+                    span.textContent = msg.content;
+                    div.appendChild(span);
+                    chatBox.appendChild(div);
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+
+        sendBtn.onclick = () => {
+            if (!selectedUserId || !msgInput.value.trim())
+                return;
+            const chatId = `${selectedUserId}_${adminId}`;
+            const chatRef = ref(db, `chats/${chatId}`);
+            const msg = {
+                senderId: adminId,
+                receiverId: selectedUserId,
+                content: msgInput.value,
+                timestamp: Date.now()
+            };
+            push(chatRef, msg);
+            msgInput.value = "";
+        };
+
+        msgInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter")
+                sendBtn.click();
         });
-        chatBox.scrollTop = chatBox.scrollHeight;
-    });
-}
 
-sendBtn.onclick = () => {
-    if (!selectedUserId || !msgInput.value.trim())
-        return;
-    const chatId = `${selectedUserId}_${adminId}`;
-    const chatRef = ref(db, `chats/${chatId}`);
-    const msg = {
-        senderId: adminId,
-        receiverId: selectedUserId,
-        content: msgInput.value,
-        timestamp: Date.now()
-    };
-    push(chatRef, msg);
-    msgInput.value = "";
-};
-
-msgInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") sendBtn.click();
-});
-
-loadChatUsers();
-</script>
+        loadChatUsers();
+    </script>
 
 </body>
 </html>
