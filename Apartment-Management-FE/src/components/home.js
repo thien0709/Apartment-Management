@@ -1,8 +1,10 @@
 import { Button, Card } from "react-bootstrap";
 import ImageSlider from "./layout/carousel";
 import { FaHome, FaUsers, FaBell, FaCog } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   return (
     <>
       <ImageSlider />
@@ -48,7 +50,9 @@ const Home = () => {
             Cần hỗ trợ hoặc có thắc mắc? Vui lòng liên hệ với ban quản lý tòa
             nhà để được trợ giúp nhanh nhất.
           </Card.Text>
-          <Button variant="primary">Liên hệ ngay</Button>
+          <Button variant="primary" onClick={() => navigate("/chat")}>
+            Liên hệ ngay
+          </Button>
         </Card.Body>
       </Card>
     </>
