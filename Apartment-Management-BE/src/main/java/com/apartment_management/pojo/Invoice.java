@@ -4,6 +4,7 @@
  */
 package com.apartment_management.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -76,6 +77,7 @@ public class Invoice implements Serializable {
     @Size(max = 6)
     @Column(name = "status")
     private String status;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "invoiceId", fetch = FetchType.EAGER)
     private Set<DetailInvoice> detailInvoiceSet;
     @JoinColumn(name = "user_id", referencedColumnName = "id")

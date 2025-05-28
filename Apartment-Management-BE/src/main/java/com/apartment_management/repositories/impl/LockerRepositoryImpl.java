@@ -52,6 +52,7 @@ public class LockerRepositoryImpl implements LockerRepository {
             this.getCurrentSession().remove(locker);
         }
     }
+
     @Override
     public List<Locker> findAllLockers() {
         Query query = getCurrentSession().createQuery("FROM Locker", Locker.class);

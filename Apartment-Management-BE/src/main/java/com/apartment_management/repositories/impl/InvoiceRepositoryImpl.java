@@ -31,7 +31,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepository {
     private Session getCurrentSession() {
         return sessionFactory.getObject().getCurrentSession();
     }
-    
+
     @Override
     public Invoice createInvoice(Invoice invoice) {
         getCurrentSession().persist(invoice);
@@ -52,6 +52,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepository {
                 .setParameter("id", id)
                 .getSingleResult();
     }
+
     @Override
     public void deleteInvoice(Integer id) {
         Session session = getCurrentSession();
@@ -60,4 +61,44 @@ public class InvoiceRepositoryImpl implements InvoiceRepository {
             session.delete(invoice);
         }
     }
+
+    @Override
+    public List<Invoice> getInvoicesByUserId(int userId) {
+        Query<Invoice> query = getCurrentSession().createQuery(
+                "FROM Invoice i LEFT JOIN FETCH i.detailInvoiceSet d LEFT JOIN FETCH d.feedId WHERE i.userId.id = :userId",
+                Invoice.class
+        );
+        query.setParameter("userId", userId);
+        return query.getResultList();
+    }
+
+//    @Override
+//    public boolean updateStatusToPaid(Invoice invoice, String method) {
+//        if (invoice == null || invoice.getId() == null) {
+//            return false;
+//        }
+//        System.out.println("Payment success");
+//        invoice.setStatus("PAID");
+//        invoice.setPaymentMethod(method);
+//        getCurrentSession().merge(invoice);
+//        
+//        return true;
+//
+//    }
+
+    @Override
+    public boolean updatePaymentInfo(Invoice invoice, String method, String paymentProofUrl) {
+         if (invoice == null || invoice.getId() == null) {
+            return false;
+        }
+        invoice.setPaymentMethod(method);
+        invoice.setStatus("PAID");
+        if(paymentProofUrl != null){
+            invoice.setPaymentProof(paymentProofUrl);
+        }
+        
+        getCurrentSession().merge(invoice);
+        return true;
+        }
+
 }

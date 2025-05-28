@@ -22,7 +22,7 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
  * @author ADMIN
  */
 @Configuration
-@PropertySource("classpath:database.properties")
+@PropertySource("classpath:application.properties")
 @PropertySource("classpath:mail.properties")
 public class HibernateConfigs {
 

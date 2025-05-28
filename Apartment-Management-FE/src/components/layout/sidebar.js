@@ -21,12 +21,17 @@ function Sidebar() {
   };
 
   const handleChangePassword = () => {
-    navigate("/change-password"); // Đường dẫn trang đổi mật khẩu
+    navigate("/change-password");
   };
 
   const handleChangeAvatar = () => {
-    navigate("/update-avatar"); // Đường dẫn trang đổi avatar
+    navigate("/update-avatar");
   };
+
+  const handlePayment = () => navigate("/payment");
+  const handleFeedback = () => navigate("/feedback");
+  const handleSurvey = () => navigate("/survey");
+  const handleChat = () => navigate("/chats");
 
   return (
     <Navbar expand="lg" className="bg-body-tertiary mb-3">
@@ -45,6 +50,28 @@ function Sidebar() {
             </Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
+            <Nav
+              className="justify-content-end flex-grow-1 pe-3"
+              style={{ alignItems: "center" }}
+            >
+              <Link to="/" className="nav-link">
+                Trang chủ
+              </Link>
+              <Dropdown>
+                <Dropdown.Toggle variant="light" className="fw-medium">
+                  Chức năng
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={handlePayment}>
+                    Thanh toán
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleFeedback}>
+                    Phản ánh
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleSurvey}>Khảo sát</Dropdown.Item>
+                  <Dropdown.Item onClick={handleChat}>Nhắn tin</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             <Nav className="justify-content-end flex-grow-1 pe-3" style={{ alignItems: "center" }}>
               <Link to="/" className="nav-link">Trang chủ</Link>
               <Link to="/payment" className="nav-link">Thanh toán</Link>
@@ -56,7 +83,11 @@ function Sidebar() {
                     <Dropdown.Toggle
                       variant="link"
                       id="dropdown-user"
-                      style={{ fontWeight: "bold", color: "#0d6efd", textDecoration: "none" }}
+                      style={{
+                        fontWeight: "bold",
+                        color: "#0d6efd",
+                        textDecoration: "none",
+                      }}
                     >
                       Xin chào, {user.username}
                     </Dropdown.Toggle>
@@ -76,7 +107,9 @@ function Sidebar() {
                   </Dropdown>
                 </>
               ) : (
-                <Link to="/login" className="nav-link">Đăng nhập</Link>
+                <Link to="/login" className="nav-link">
+                  Đăng nhập
+                </Link>
               )}
             </Nav>
           </Offcanvas.Body>

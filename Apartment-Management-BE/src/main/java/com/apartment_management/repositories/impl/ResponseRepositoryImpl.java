@@ -65,4 +65,17 @@ public class ResponseRepositoryImpl implements ResponseRepository {
         return session.createQuery(cq).getResultList();
     }
 
+    @Override
+    public List<Response> findByQuestionId(Integer questionId) {
+        Session session = this.getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Response> cq = cb.createQuery(Response.class);
+        Root<Response> root = cq.from(Response.class);
+
+        cq.select(root)
+                .where(cb.equal(root.get("questionId").get("id"), questionId));
+
+        return session.createQuery(cq).getResultList();
+    }
+
 }

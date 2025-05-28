@@ -44,5 +44,10 @@ public class ResponseServiceImpl implements ResponseService{
     public List<Response> getResponses(Integer surveyId, Integer questionId, Integer userId) {
         return this.responseRepo.getResponses(surveyId, questionId, userId);
     }
+
+    @Override
+    public List<Response> findByQuestionId(Integer questionId) {
+        return this.responseRepo.findByQuestionId(questionId);
+    }
     
 }

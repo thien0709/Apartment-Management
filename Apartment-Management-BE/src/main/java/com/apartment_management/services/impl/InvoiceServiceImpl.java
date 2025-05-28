@@ -9,11 +9,19 @@ import com.apartment_management.pojo.Invoice;
 import com.apartment_management.repositories.DetailInvoiceRepository;
 import com.apartment_management.repositories.InvoiceRepository;
 import com.apartment_management.services.InvoiceService;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -24,6 +32,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     private InvoiceRepository invoiceRepository;
+
+    @Autowired
+    private Cloudinary cloudinary;
 
     @Autowired
     private DetailInvoiceRepository detailInvoiceRepository;
@@ -77,4 +88,34 @@ public class InvoiceServiceImpl implements InvoiceService {
         System.out.println("Invoice ID: " + id + " not found");
         return false;
     }
+
+    @Override
+    public List<Invoice> getInvoicesByUserId(int userId) {
+        return invoiceRepository.getInvoicesByUserId(userId);
+    }
+
+    @Override
+    public void updatePaymentInfo(List<Integer> invoiceIds, String method, MultipartFile proofImage) {
+        String proofUrl = null;
+
+        // Upload ảnh nếu có
+        if (proofImage != null && !proofImage.isEmpty()) {
+            try {
+                Map res = cloudinary.uploader().upload(proofImage.getBytes(),
+                        ObjectUtils.asMap("resource_type", "auto"));
+                proofUrl = res.get("secure_url").toString();
+            } catch (IOException ex) {
+                throw new RuntimeException("Lỗi upload ảnh thanh toán");
+            }
+        }
+
+        // Gọi repository để cập nhật
+        for (Integer id : invoiceIds) {
+            Invoice invoice = invoiceRepository.findById(id);
+            if (invoice != null) {
+                invoiceRepository.updatePaymentInfo(invoice, method, proofUrl);
+            }
+        }
+    }
+
 }

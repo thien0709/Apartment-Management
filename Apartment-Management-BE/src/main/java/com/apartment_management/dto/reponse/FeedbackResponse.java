@@ -10,12 +10,13 @@ import java.util.Date;
  *
  * @author thien
  */
-public class FeedbackDTO {
+public class FeedbackResponse {
 
     private Integer id;
     private String content;
     private Date createdAt;
     private String username;
+    private String status;
 
     /**
      * @return the id
@@ -71,6 +72,20 @@ public class FeedbackDTO {
      */
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    /**
+     * @return the status
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 

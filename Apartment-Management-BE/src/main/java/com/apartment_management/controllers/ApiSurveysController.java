@@ -4,6 +4,7 @@
  */
 package com.apartment_management.controllers;
 
+import com.apartment_management.dto.reponse.AnswerResponse;
 import com.apartment_management.pojo.Question;
 import com.apartment_management.pojo.Response;
 import com.apartment_management.pojo.Survey;
@@ -37,22 +38,23 @@ public class ApiSurveysController {
     @Autowired
     private ResponseService responseService;
 
+    @GetMapping("/surveys")
+    public ResponseEntity<List<Survey>> getAllSurvey() {
+        return ResponseEntity.ok(surveyService.getAllSurveys());
+    }
+
     @GetMapping("/survey/{surveyId}")
-    public ResponseEntity<List<Question>> getQuestionsBySurveyId(@PathVariable int surveyId) {
+    public ResponseEntity<List<Question>> getQuestionsBySurveyId(@PathVariable("surveyId") int surveyId) {
         return ResponseEntity.ok(questionService.getQuestionsBySurveyId(surveyId));
     }
 
-    @PostMapping("/survey/{surveyId}/submit")
+    @PostMapping("/survey/{surveyId}")
     public ResponseEntity<String> submitSurveyResponses(
-            @PathVariable int surveyId,
-            @RequestBody List<Response> responses) {
-
+            @PathVariable("surveyId") int surveyId,
+            @RequestBody List<AnswerResponse> responses) {
         try {
-            for (Response r : responses) {
-                int questionId = r.getQuestionId().getId();
-                int userId = r.getUserId().getId();
-                String answer = r.getAnswer();
-                responseService.submitResponse(answer, questionId, userId);
+            for (AnswerResponse r : responses) {
+                responseService.submitResponse(r.getAnswer(), r.getQuestionId(), r.getUserId());
             }
             return ResponseEntity.ok("Responses submitted successfully.");
         } catch (Exception ex) {

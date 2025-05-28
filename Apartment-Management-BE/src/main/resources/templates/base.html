@@ -1,8 +1,9 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      >
     <head>
-        <title>Trang chủ</title>
+        <title th:text="#{app.title}">Apartment Management Admin</title>
 
         <!-- Fragment: Bootstrap CSS & JS -->
     <th:block th:fragment="bootstrap">
@@ -34,7 +35,17 @@
     <header th:fragment="header">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">Apartment Management Admin</a>
+                <a class="navbar-brand" th:href="@{/}" th:text="#{app.title}">Apartment Management Admin</a>
+                <div class="d-flex ms-auto">
+                    <form method="get" th:action="@{${pageUrl}}">
+                        <select name="lang" onchange="this.form.submit()">
+                            <option value="en" th:selected="${#locale.language == 'en'}">English</option>
+                            <option value="vi" th:selected="${#locale.language == 'vi'}">Vietnamese</option>
+                        </select>
+                    </form>
+
+
+                </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarNavDropdown"
                         aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,29 +55,32 @@
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" th:href="@{/}">Home</a>
+                            <a class="nav-link active" aria-current="page" th:href="@{/}"  th:text="#{nav.home}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/statistics}">Statistics</a>
+                            <a class="nav-link" th:href="@{/statistics}" th:text="#{nav.statistics}">Statistics</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
-                                Feature
-                            </a>
+                               data-bs-toggle="dropdown" aria-expanded="false" th:text="#{nav.feature}">Feature</a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <li><a class="dropdown-item" th:href="@{/manage-user}">Manage User</a></li>
-                                <li><a class="dropdown-item" th:href="@{/feedback-process}">Feedback Process</a></li>
-                                <li><a class="dropdown-item" th:href="@{/invoices}">Invoice</a></li>
+                              
+                                <li><a class="dropdown-item" th:href="@{/manage-user}" th:text="#{nav.manageUser}">Manage User</a></li>
+                                <li><a class="dropdown-item" th:href="@{/invoices}" th:text="#{nav.invoices}">Invoice</a></li>
                                 <li><a class="dropdown-item" th:href="@{/receive-package}">Receive Package</a></li>
                                 <li><a class="dropdown-item" th:href="@{/card/list-card}">Cards</a></li>
+                                <li><a class="dropdown-item" th:href="@{/receive-package}" th:text="#{nav.receivePackage}">Receive Package</a></li>
+                                <li><a class="dropdown-item" th:href="@{/room-manage}" th:text="#{nav.roomManage}">Room Manage</a></li>
+                                <li><a class="dropdown-item" th:href="@{/survey-manage}" th:text="#{nav.surveyManage}">Survey Manage</a></li>
+                                <li><a class="dropdown-item" th:href="@{/feedbacks}" th:text="#{nav.feedbacksManage}">Feedbacks Manage</a></li>
+                                <li><a class="dropdown-item" th:href="@{/chats}" th:text="#{nav.chat}">Chat</a></li>
                             </ul>
                         </li>
                         <li class="nav-item" sec:authorize="!isAuthenticated()">
-                            <a class="nav-link" th:href="@{/login}">Login</a>
+                            <a class="nav-link" th:href="@{/login}" th:text="#{nav.login}">Login</a>
                         </li>
                         <li class="nav-item" sec:authorize="isAuthenticated()">
-                            <a class="nav-link" th:href="@{/logout}">Log out</a>
+                            <a class="nav-link" th:href="@{/logout}" th:text="#{nav.logout}">Log out</a>
                         </li>
                     </ul>
                 </div>
@@ -78,11 +92,11 @@
     <footer th:fragment="footer">
         <footer class="bg-light text-center text-lg-start mt-2">
             <div class="text-center p-3">
-                © <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}"></span> Apartment Management |
-                All rights reserved.
+                © <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}"></span> 
+                <span th:text="#{app.title}">Apartment Management</span> | 
+                <span th:text="#{footer.rights}">All rights reserved.</span>
             </div>
         </footer>
     </footer>
-
 </body>
 </html>

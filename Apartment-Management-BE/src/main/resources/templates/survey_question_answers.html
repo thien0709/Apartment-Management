@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Danh sách câu trả lời</title>
+    <th:block th:replace="base :: bootstrap"></th:block>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+    <div class="container mt-4">
+        <h2 th:text="'Khảo sát: ' + ${survey.title}"></h2>
+        <h4 th:text="'Câu hỏi: ' + ${question.content}"></h4>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Câu trả lời</th>
+                    <th>Người dùng </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="answer, iterStat : ${answers}">
+                    <td th:text="${iterStat.count}"></td>
+                    <td th:text="${answer.answer}"></td> 
+                    <td th:text="${answer.userId.username}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a th:href="@{'/survey-manage/detail/' + ${survey.id}}" class="btn btn-secondary">Quay lại danh sách câu hỏi</a>
+    </div>
+    <div th:replace="base :: footer"></div>
+</body>
+</html>
+

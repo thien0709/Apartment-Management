@@ -4,7 +4,7 @@
  */
 package com.apartment_management.controllers;
 
-import com.apartment_management.dto.reponse.FeedbackDTO;
+import com.apartment_management.dto.reponse.FeedbackResponse;
 import com.apartment_management.pojo.Feedback;
 import com.apartment_management.services.FeedBackService;
 import java.util.List;
@@ -36,12 +36,12 @@ public class ApiFeedbackController {
 
     @PostMapping("/feedback")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<FeedbackDTO> createFeedback(@RequestBody Map<String, Object> payload) {
-        int userId = (Integer) payload.get("userId");
+    public ResponseEntity<FeedbackResponse> createFeedback(@RequestBody Map<String, Object> payload) {
+        int userId = (int) payload.get("userId");
         String content = (String) payload.get("content");
         Feedback feedback = this.feedbackService.createFeedback(userId, content);
 
-        FeedbackDTO dto = new FeedbackDTO();
+        FeedbackResponse dto = new FeedbackResponse();
         dto.setId(feedback.getId());
         dto.setContent(feedback.getContent());
         dto.setCreatedAt(feedback.getCreatedAt());
@@ -51,16 +51,17 @@ public class ApiFeedbackController {
     }
 
     @GetMapping("/feedback/{userId}")
-    public ResponseEntity<List<FeedbackDTO>> getFeedbackByUserId(@PathVariable("userId") int userId) {
+    public ResponseEntity<List<FeedbackResponse>> getFeedbackByUserId(@PathVariable("userId") int userId) {
         List<Feedback> feedbackList = feedbackService.getFeedbacksByUserId(userId);
 
         if (feedbackList != null && !feedbackList.isEmpty()) {
-            List<FeedbackDTO> feedbackDTOList = feedbackList.stream().map(feedback -> {
-                FeedbackDTO dto = new FeedbackDTO();
+            List<FeedbackResponse> feedbackDTOList = feedbackList.stream().map(feedback -> {
+                FeedbackResponse dto = new FeedbackResponse();
                 dto.setId(feedback.getId());
                 dto.setContent(feedback.getContent());
                 dto.setCreatedAt(feedback.getCreatedAt());
                 dto.setUsername(feedback.getUserId().getUsername());
+                dto.setStatus(feedback.getStatus());
                 return dto;
             }).collect(Collectors.toList());
 
@@ -71,16 +72,32 @@ public class ApiFeedbackController {
     }
 
     @PutMapping("/feedback/{feedbackId}")
-    public Feedback updateFeedBack(
-            @PathVariable(value = "feedbackId") int feedbackId,
-            @RequestBody String content) {
-        return this.feedbackService.updateFeedback(feedbackId, content);
+    public ResponseEntity<Feedback> updateFeedBack(
+            @PathVariable("feedbackId") int feedbackId,
+            @RequestBody FeedbackResponse fb) {
+
+        Feedback updatedFeedback = feedbackService.updateFeedback(feedbackId, fb.getContent());
+
+        if (updatedFeedback != null) {
+            return ResponseEntity.ok(updatedFeedback);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
-    
-      @DeleteMapping("/feedback/{feedbackId}")
-    public void deleteFeedBack(
-            @PathVariable(value = "feedbackId") int feedbackId
-            ) {
-         this.feedbackService.deleteFeedback(feedbackId);
+
+    @DeleteMapping("/feedback/{feedbackId}")
+    public ResponseEntity<Void> deleteFeedBack(@PathVariable("feedbackId") int feedbackId) {
+        try {
+            Feedback f = feedbackService.getFeedBackById(feedbackId);
+            if (f == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            feedbackService.deleteFeedback(feedbackId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
+
 }

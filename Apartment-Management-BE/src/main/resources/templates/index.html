@@ -15,7 +15,7 @@
             <div class="col-md-3">
                 <div class="card text-white bg-primary mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Total Apartments</h5>
+                        <h5 class="card-title">Apartments</h5>
                         <p class="card-text" th:text="${totalApartments}">120</p>
                     </div>
                 </div>
@@ -57,8 +57,8 @@
             <div class="col-md-3">
                 <div class="card text-white bg-danger mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Pending Maintenance</h5>
-                        <p class="card-text" th:text="${maintenanceRequests}">7</p>
+                        <h5 class="card-title">Invoice</h5>
+                        <p class="card-text" th:text="${totalInvoice}">7</p>
                     </div>
                 </div>
             </div>
@@ -68,7 +68,7 @@
                 <div class="card text-white bg-secondary mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Residents</h5>
-                        <p class="card-text" th:text="${registeredResidents}">320</p>
+                        <p class="card-text" th:text="${totalResidents}">320</p>
                     </div>
                 </div>
             </div>
@@ -77,8 +77,8 @@
             <div class="col-md-3">
                 <div class="card text-white bg-dark mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Visitor Logs (Today)</h5>
-                        <p class="card-text" th:text="${visitorLogsToday}">42</p>
+                        <h5 class="card-title">Locker</h5>
+                        <p class="card-text" th:text="${totalLocker}">42</p>
                     </div>
                 </div>
             </div>
@@ -88,7 +88,7 @@
                 <div class="card text-black bg-light text-dark mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Feedback</h5>
-                        <p class="card-text" th:text="${feedbackCount}">15</p>
+                        <p class="card-text" th:text="${totalFeedback}">15</p>
                     </div>
                 </div>
             </div>
@@ -96,6 +96,5 @@
     </main>
 
     <div th:replace="base :: footer"></div>
-    <script th:src="@{/js/main.js}"></script>
 </body>
 </html>

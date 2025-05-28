@@ -3,9 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
 package com.apartment_management.repositories;
+
 import com.apartment_management.pojo.Locker;
 import com.apartment_management.pojo.User;
 import java.util.List;
+
 
 /**
  *
@@ -17,4 +19,5 @@ public interface LockerRepository {
     void deleteLocker(int userId);
     List<Locker> findAllLockers();
     boolean existsById(int userId);
+
 }

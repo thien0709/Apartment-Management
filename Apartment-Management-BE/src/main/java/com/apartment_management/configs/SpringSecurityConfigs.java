@@ -1,4 +1,3 @@
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -28,11 +28,9 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 /**
  *
  * @author thien
-=======
  */
 @Configuration
 @EnableWebSecurity
@@ -43,7 +41,10 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
     "com.apartment_management.services"
 })
 public class SpringSecurityConfigs {
-    
+
+    @Autowired
+    private Environment env;
+
     @Autowired
     private UserDetailsService userDetailsService;
 
@@ -57,7 +58,6 @@ public class SpringSecurityConfigs {
         return new HandlerMappingIntrospector();
     }
 
-
     @Bean
     public StandardServletMultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
@@ -67,18 +67,18 @@ public class SpringSecurityConfigs {
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
-
-        config.setAllowedOrigins(List.of("http://localhost:3000","http://localhost:8080")); 
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8080"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(true); 
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
 
         return source;
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -86,7 +86,7 @@ public class SpringSecurityConfigs {
                 .authorizeHttpRequests(requests
                         -> requests
                         .requestMatchers("/", "/home").permitAll()
-                        .requestMatchers("/receive-package/**","/register","/manage-user/**","/invoices","/statistics").authenticated()
+                        .requestMatchers("/receive-package/**","/register","/manage-user/**","/invoices","/statistics", "/survey-manage", "/feedbacks", "/chats").authenticated()
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
@@ -102,13 +102,14 @@ public class SpringSecurityConfigs {
                 );
         return http.build();
     }
+
     @Bean
     public Cloudinary cloudinary() {
         Cloudinary cloudinary
                 = new Cloudinary(ObjectUtils.asMap(
-                        "cloud_name", "dzwsdpjgi",
-                        "api_key", "693865187219449",
-                        "api_secret", "PtxvcgqYO2dZs7RDWJeNc2DA5Ew",
+                        "cloud_name", env.getProperty("cloudinary.cloud_name"),
+                        "api_key", env.getProperty("cloudinary.api_key"),
+                        "api_secret", env.getProperty("cloudinary.api_secret"),
                         "secure", true));
         return cloudinary;
     }
