@@ -4,11 +4,15 @@
  */
 package com.apartment_management.controllers;
 
-import com.apartment_management.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 /**
  *
  * @author ADMIN
@@ -16,8 +20,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @ControllerAdvice
 public class IndexController {
+
+    @Autowired
+    private MessageSource messageSource;
+
     @RequestMapping("/")
-    public String index(){
+    public String index(Locale locale) {
+        String title = messageSource.getMessage("app.title", null, locale);
+        System.out.println("Title: " + title + " | Locale: " + locale);
         return "index";
     }
+
+    @ModelAttribute("pageUrl")
+    public String populatePageUrl(HttpServletRequest request) {
+        String contextPath = request.getContextPath();
+        String uri = request.getRequestURI();
+        if (uri.startsWith(contextPath)) {
+            return uri.substring(contextPath.length());
+        }
+        return uri;
+    }
+
 }

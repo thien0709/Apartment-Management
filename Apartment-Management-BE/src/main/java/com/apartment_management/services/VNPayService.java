@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
-@PropertySource("classpath:application-dev.properties")
+@PropertySource("classpath:application.properties")
 public class VNPayService {
 
     @Autowired
