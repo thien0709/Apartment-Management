@@ -65,18 +65,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean addUser(User user, MultipartFile file) {
-        if (file != null && !file.isEmpty()) {
-            try {
-                Map res = cloudinary.uploader().upload(file.getBytes(),
-                        ObjectUtils.asMap("resource_type", "auto"));
-                user.setAvatarUrl(res.get("secure_url").toString());
-            } catch (IOException ex) {
-                Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
-            }
-        }
-
+    public boolean addUser(User user) {
         // Mã hóa mật khẩu
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         user.setPassword(encoder.encode(user.getPassword()));
@@ -84,6 +73,7 @@ public class UserServiceImpl implements UserService {
         // Thêm thời gian tạo và kích hoạt tài khoản
         user.setCreatedAt(new Date());
         user.setIsActive(Boolean.TRUE);
+        user.setAvatarUrl("https://res.cloudinary.com/dzwsdpjgi/image/upload/v1748436782/avatar_trang_1_cd729c335b_aiu2nl.jpg");
         userRepo.addUser(user);
         return true;
     }

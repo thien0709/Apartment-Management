@@ -126,7 +126,6 @@ public class UserController {
             @RequestParam("phone") String phone,
             @RequestParam("email") String email,
             @RequestParam("role") String role,
-            @RequestParam("file") MultipartFile file,
             @RequestParam(value = "roomId", required = false) Integer roomId,
             HttpSession session
     ) {
@@ -148,14 +147,13 @@ public class UserController {
         user.setPhone(phone);
         user.setEmail(email);
         user.setRole(role.toUpperCase());
-        user.setFile(file);
 
         if ("RESIDENT".equalsIgnoreCase(role) && roomId != null) {
             Room room = roomService.getRoomById(roomId);
             user.setRoomId(room);
         }
 
-        userSer.addUser(user, file);
+        userSer.addUser(user);
 
         // Xóa trạng thái form sau khi đăng ký thành công
         session.removeAttribute("registerFormData");

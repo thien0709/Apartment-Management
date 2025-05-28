@@ -10,7 +10,7 @@
 <main class="container mt-4">
     <h1>Register</h1>
 
-    <form id="registerForm" th:action="@{/register}" method="post" enctype="multipart/form-data">
+    <form id="registerForm" th:action="@{/register}" method="post">
         <div class="mb-3 mt-3">
             <label for="username" class="form-label">User name</label>
             <input type="text" class="form-control" id="username" name="username" th:value="${username}" placeholder="Enter user name" required="true"/>
@@ -30,10 +30,6 @@
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <input type="text" class="form-control" id="email" name="email" th:value="${email}" placeholder="Enter Email" required="true"/>
-        </div>
-        <div class="mb-3">
-            <label for="avatar" class="form-label">Avatar</label>
-            <input type="file" class="form-control" id="avatar" name="file"/>
         </div>
         <div class="mb-3">
             <label class="form-label">Role</label><br/>
