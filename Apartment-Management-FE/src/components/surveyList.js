@@ -1,4 +1,4 @@
-import { useState, useEffect, use, useContext} from "react";
+import { useState, useEffect, useContext} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Apis, { endpoints } from "../configs/Apis";
 import { MyUserContext } from "../configs/MyContexts";
@@ -7,7 +7,6 @@ const SurveyList = () => {
   const [surveys, setSurveys] = useState([]);
   const user = useContext(MyUserContext);
   const navigator = useNavigate();
-
   const loadSurveys = async () => {
     try {
       const res = await Apis.get(endpoints["surveys"]);
@@ -17,10 +16,11 @@ const SurveyList = () => {
     }
   } ;
 
-  useEffect(() => {
-    if(!user.id) navigator("/login");
-    loadSurveys();
-  }, [user.id]);
+
+    useEffect(() => {
+    if (!user.user?.id) navigator("/login");
+   loadSurveys();
+  }, [user.user?.id]);
 
   return (
     <div className="container my-5">
