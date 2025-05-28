@@ -53,9 +53,9 @@ const UploadAvatar = () => {
 
       setMsg(res.data.message || "Cập nhật avatar thành công!");
       setVariant("success");
-      setAvatar(null); // reset file chọn
+      setAvatar(null); 
       setPreview(null);
-      // Có thể refresh dữ liệu user hoặc làm gì đó nếu cần
+      navigate("/change-password");
     } catch (err) {
       console.error("Upload error:", err);
       setMsg(err.response?.data?.error || "Cập nhật thất bại.");

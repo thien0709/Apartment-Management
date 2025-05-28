@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react'; // Thêm useEffect
 import axios from 'axios';
 import { Form, Button, Alert, Container, Row, Col, Card } from 'react-bootstrap';
 import Apis, { authApis, endpoints } from '../configs/Apis';
+import { useNavigate } from 'react-router-dom';
 
 function ChangePassword({ userId: propUserId, token }) {
+    const navigator = useNavigate();
     const [userId, setUserId] = useState(propUserId); // Sử dụng propUserId làm giá trị ban đầu
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -46,6 +48,7 @@ function ChangePassword({ userId: propUserId, token }) {
             setVariant('success');
             setOldPassword('');
             setNewPassword('');
+            navigator("/update-avatar");
         } catch (error) {
             setMessage(error.response?.data?.error || 'Đổi mật khẩu thất bại!');
             setVariant('danger');
