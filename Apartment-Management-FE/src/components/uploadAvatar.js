@@ -1,17 +1,31 @@
-import React, { useState, useContext } from "react";
-import { Button, Alert, Form } from "react-bootstrap";
+import React, { useState, useContext, useEffect } from "react";
+import { Button, Alert, Form, Image } from "react-bootstrap";
 import { authApis } from "../configs/Apis";
 import { MyUserContext } from "../configs/MyContexts";
 import { useNavigate } from "react-router-dom";
 
 const UploadAvatar = () => {
-  const [avatar, setAvatar] = useState(null);
+  const [avatar, setAvatar] = useState(null);         // file mới chọn
+  const [preview, setPreview] = useState(null);       // URL preview ảnh mới
   const [msg, setMsg] = useState(null);
   const [variant, setVariant] = useState("success");
 
   const { user } = useContext(MyUserContext);
-  console.log(user);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Tạo URL xem trước ảnh khi user chọn file mới
+    if (!avatar) {
+      setPreview(null);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(avatar);
+    setPreview(objectUrl);
+
+    // Cleanup URL khi component unmount hoặc avatar thay đổi
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [avatar]);
 
   if (!user) {
     navigate("/login");
@@ -39,6 +53,9 @@ const UploadAvatar = () => {
 
       setMsg(res.data.message || "Cập nhật avatar thành công!");
       setVariant("success");
+      setAvatar(null); // reset file chọn
+      setPreview(null);
+      // Có thể refresh dữ liệu user hoặc làm gì đó nếu cần
     } catch (err) {
       console.error("Upload error:", err);
       setMsg(err.response?.data?.error || "Cập nhật thất bại.");
@@ -47,11 +64,47 @@ const UploadAvatar = () => {
   };
 
   return (
-    <Form onSubmit={handleChangeAvatar}>
+    <Form onSubmit={handleChangeAvatar} style={{ maxWidth: "400px", margin: "auto" }}>
       {msg && <Alert variant={variant}>{msg}</Alert>}
 
+      <div className="mb-3 text-center">
+        {/* Hiển thị ảnh hiện tại hoặc ảnh preview */}
+        {preview ? (
+          <Image
+            src={preview}
+            roundedCircle
+            fluid
+            alt="Ảnh đại diện mới"
+            style={{ width: "150px", height: "150px", objectFit: "cover" }}
+          />
+        ) : user.avatarUrl ? (
+          <Image
+            src={user.avatarUrl}
+            roundedCircle
+            fluid
+            alt="Ảnh đại diện hiện tại"
+            style={{ width: "150px", height: "150px", objectFit: "cover" }}
+          />
+        ) : (
+          <div
+            style={{
+              width: "150px",
+              height: "150px",
+              borderRadius: "50%",
+              backgroundColor: "#ddd",
+              lineHeight: "150px",
+              textAlign: "center",
+              color: "#666",
+              margin: "0 auto",
+            }}
+          >
+            Chưa có ảnh
+          </div>
+        )}
+      </div>
+
       <Form.Group className="mb-3">
-        <Form.Label>Chọn ảnh đại diện</Form.Label>
+        <Form.Label>Chọn ảnh đại diện mới</Form.Label>
         <Form.Control
           type="file"
           accept="image/*"
@@ -59,7 +112,9 @@ const UploadAvatar = () => {
         />
       </Form.Group>
 
-      <Button type="submit">Cập nhật avatar</Button>
+      <Button type="submit" disabled={!avatar}>
+        Cập nhật avatar
+      </Button>
     </Form>
   );
 };
