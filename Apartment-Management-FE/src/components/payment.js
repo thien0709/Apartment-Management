@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./styles/payment.css";
 
 const Payment = () => {
-  const { user, token } = useContext(MyUserContext);
+  const { user, loading } = useContext(MyUserContext);
   const location = useLocation();
   const navigator = useNavigate();
 
@@ -24,9 +24,7 @@ const Payment = () => {
   const fetchInvoices = async () => {
     setIsLoading(true);
     try {
-      const res = await Apis.get(endpoints["invoices"](user?.id), {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+        const res = await Apis.get(endpoints["invoices"](user?.id));
       console.log("Fetched invoices:", res.data);
       setInvoices(Array.isArray(res.data) ? res.data : []);
     } catch {
@@ -46,7 +44,9 @@ const Payment = () => {
         type: "success",
         message: "Thanh toán thành công qua VNPay!",
       });
-      fetchInvoices();
+      if (loading && user?.id) {
+        fetchInvoices();
+      }
     } else if (status === "cancel") {
       setPaymentStatus({
         type: "warning",
@@ -61,10 +61,15 @@ const Payment = () => {
   }, [location.search]);
 
   // Initial fetch
+
   useEffect(() => {
-    if (!user?.user.id) navigator("/login");
-    if (user?.user.id) fetchInvoices();
-  }, [user?.user.id]);
+    if (!loading && !user?.id) {
+      navigator("/login");
+    }
+    if (user?.id) {
+      fetchInvoices();
+    }
+  }, [loading, user?.id]);
 
   const toggleInvoiceSelection = (id) => {
     const invoice = invoices.find((inv) => inv.id === id);
@@ -76,7 +81,7 @@ const Payment = () => {
   };
 
   const calculateTotal = () =>
-    Array.isArray(invoices)
+     Array.isArray(invoices)
       ? invoices
           .filter((inv) => selectedInvoices.includes(inv.id))
           .reduce((sum, inv) => sum + inv.totalAmount, 0)
@@ -97,12 +102,11 @@ const Payment = () => {
 
     try {
       if (paymentMethod === "CASH") {
-        const res = await Apis.post(
-          endpoints["payment-vnpay"],
-          { invoiceId: selectedInvoices, amount: totalAmount },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        window.open(res.data, "_blank");
+        const res = await Apis.post(endpoints["payment-vnpay"], {
+          invoiceId: selectedInvoices,
+          amount: totalAmount,
+        });
+        window.location.href = res.data;
         setPaymentStatus({
           type: "success",
           message:
@@ -116,7 +120,6 @@ const Payment = () => {
 
         await Apis.post(endpoints["payment-banking"], formData, {
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
         });
@@ -196,7 +199,6 @@ const Payment = () => {
               </Col>
             )}
           </Row>
-
           <h5>Phương thức thanh toán:</h5>
           <Row className="mb-4">
             <Col md={6}>
