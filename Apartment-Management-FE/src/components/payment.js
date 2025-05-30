@@ -27,7 +27,8 @@ const Payment = () => {
       const res = await Apis.get(endpoints["invoices"](user?.id), {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setInvoices(res.data);
+      console.log("Fetched invoices:", res.data);
+      setInvoices(Array.isArray(res.data) ? res.data : []);
     } catch {
       setPaymentStatus({ type: "danger", message: "Lỗi khi tải hóa đơn." });
     } finally {
@@ -41,12 +42,21 @@ const Payment = () => {
     const status = params.get("status");
 
     if (status === "success") {
-      setPaymentStatus({ type: "success", message: "Thanh toán thành công qua VNPay!" });
+      setPaymentStatus({
+        type: "success",
+        message: "Thanh toán thành công qua VNPay!",
+      });
       fetchInvoices();
     } else if (status === "cancel") {
-      setPaymentStatus({ type: "warning", message: "Bạn đã hủy thanh toán VNPay." });
+      setPaymentStatus({
+        type: "warning",
+        message: "Bạn đã hủy thanh toán VNPay.",
+      });
     } else if (status === "fail") {
-      setPaymentStatus({ type: "danger", message: "Thanh toán thất bại. Vui lòng thử lại." });
+      setPaymentStatus({
+        type: "danger",
+        message: "Thanh toán thất bại. Vui lòng thử lại.",
+      });
     }
   }, [location.search]);
 
@@ -66,9 +76,11 @@ const Payment = () => {
   };
 
   const calculateTotal = () =>
-    invoices
-      .filter((inv) => selectedInvoices.includes(inv.id))
-      .reduce((sum, inv) => sum + inv.totalAmount, 0);
+    Array.isArray(invoices)
+      ? invoices
+          .filter((inv) => selectedInvoices.includes(inv.id))
+          .reduce((sum, inv) => sum + inv.totalAmount, 0)
+      : 0;
 
   const handlePayment = async (e) => {
     e.preventDefault();
@@ -93,7 +105,8 @@ const Payment = () => {
         window.open(res.data, "_blank");
         setPaymentStatus({
           type: "success",
-          message: "Mở VNPay để thanh toán. Hãy kiểm tra trạng thái hóa đơn sau.",
+          message:
+            "Mở VNPay để thanh toán. Hãy kiểm tra trạng thái hóa đơn sau.",
         });
       } else if (paymentMethod === "TRANSFER") {
         const formData = new FormData();
@@ -119,7 +132,10 @@ const Payment = () => {
       setPaymentMethod("");
       setProofFile(null);
     } catch {
-      setPaymentStatus({ type: "danger", message: "Lỗi khi xử lý thanh toán." });
+      setPaymentStatus({
+        type: "danger",
+        message: "Lỗi khi xử lý thanh toán.",
+      });
     } finally {
       setIsPaying(false);
     }
@@ -129,37 +145,65 @@ const Payment = () => {
     <div className="payment-container">
       <h2 className="text-center mb-4">Thanh toán</h2>
 
-      {paymentStatus && <Alert variant={paymentStatus.type}>{paymentStatus.message}</Alert>}
-      {showAlert && <Alert variant="danger">Vui lòng chọn phương thức và hóa đơn cần thanh toán.</Alert>}
+      {paymentStatus && (
+        <Alert variant={paymentStatus.type}>{paymentStatus.message}</Alert>
+      )}
+      {showAlert && (
+        <Alert variant="danger">
+          Vui lòng chọn phương thức và hóa đơn cần thanh toán.
+        </Alert>
+      )}
 
       {isLoading ? (
-        <div className="text-center"><Spinner animation="border" /></div>
+        <div className="text-center">
+          <Spinner animation="border" />
+        </div>
       ) : (
         <form onSubmit={handlePayment}>
           <Row className="mb-4">
-            {invoices.map((inv) => (
-              <Col md={4} key={inv.id}>
-                <Card
-                  className={`payment-card ${selectedInvoices.includes(inv.id) ? "selected" : ""} ${inv.status === "PAID" ? "disabled" : ""}`}
-                  onClick={() => toggleInvoiceSelection(inv.id)}
-                >
-                  <Card.Body className="text-center">
-                    <Card.Title>Hóa đơn #{inv.id}</Card.Title>
-                    <Card.Text>{inv.totalAmount.toLocaleString()} VND</Card.Text>
-                    <div className={inv.status === "PAID" ? "text-success" : "text-danger"}>
-                      {inv.status === "PAID" ? "Đã thanh toán" : "Chưa thanh toán"}
-                    </div>
-                  </Card.Body>
-                </Card>
+            {Array.isArray(invoices) && invoices.length > 0 ? (
+              invoices.map((inv) => (
+                <Col md={4} key={inv.id}>
+                  <Card
+                    className={`payment-card ${
+                      selectedInvoices.includes(inv.id) ? "selected" : ""
+                    } ${inv.status === "PAID" ? "disabled" : ""}`}
+                    onClick={() => toggleInvoiceSelection(inv.id)}
+                  >
+                    <Card.Body className="text-center">
+                      <Card.Title>Hóa đơn #{inv.id}</Card.Title>
+                      <Card.Text>
+                        {inv.totalAmount.toLocaleString()} VND
+                      </Card.Text>
+                      <div
+                        className={
+                          inv.status === "PAID" ? "text-success" : "text-danger"
+                        }
+                      >
+                        {inv.status === "PAID"
+                          ? "Đã thanh toán"
+                          : "Chưa thanh toán"}
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))
+            ) : (
+              <Col>
+                <div className="text-center text-muted">
+                  Không có hóa đơn nào.
+                </div>
               </Col>
-            ))}
+            )}
           </Row>
 
           <h5>Phương thức thanh toán:</h5>
           <Row className="mb-4">
             <Col md={6}>
               <Card
-                className={`payment-method-card ${paymentMethod === "TRANSFER" ? "selected" : ""}`}
+                className={`payment-method-card ${
+                  paymentMethod === "TRANSFER" ? "selected" : ""
+                }`}
                 onClick={() => setPaymentMethod("TRANSFER")}
               >
                 <Card.Body className="text-center">
@@ -170,7 +214,9 @@ const Payment = () => {
             </Col>
             <Col md={6}>
               <Card
-                className={`payment-method-card ${paymentMethod === "CASH" ? "selected" : ""}`}
+                className={`payment-method-card ${
+                  paymentMethod === "CASH" ? "selected" : ""
+                }`}
                 onClick={() => setPaymentMethod("CASH")}
               >
                 <Card.Body className="text-center">
@@ -193,7 +239,9 @@ const Payment = () => {
                   onChange={(e) => setProofFile(e.target.files[0])}
                 />
               </Form.Group>
-              {proofFile && <p className="text-info">Ảnh đã chọn: {proofFile.name}</p>}
+              {proofFile && (
+                <p className="text-info">Ảnh đã chọn: {proofFile.name}</p>
+              )}
             </div>
           )}
 
