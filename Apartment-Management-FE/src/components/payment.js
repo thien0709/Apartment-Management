@@ -24,9 +24,9 @@ const Payment = () => {
   const fetchInvoices = async () => {
     setIsLoading(true);
     try {
-      console.log("Fetching invoices for user:", user);
-      const res = await Apis.get(endpoints["invoices"](user?.id));
-      setInvoices(res.data);
+        const res = await Apis.get(endpoints["invoices"](user?.id));
+      console.log("Fetched invoices:", res.data);
+      setInvoices(Array.isArray(res.data) ? res.data : []);
     } catch {
       setPaymentStatus({ type: "danger", message: "Lỗi khi tải hóa đơn." });
     } finally {
@@ -81,9 +81,11 @@ const Payment = () => {
   };
 
   const calculateTotal = () =>
-    invoices
-      .filter((inv) => selectedInvoices.includes(inv.id))
-      .reduce((sum, inv) => sum + inv.totalAmount, 0);
+     Array.isArray(invoices)
+      ? invoices
+          .filter((inv) => selectedInvoices.includes(inv.id))
+          .reduce((sum, inv) => sum + inv.totalAmount, 0)
+      : 0;
 
   const handlePayment = async (e) => {
     e.preventDefault();
@@ -162,34 +164,41 @@ const Payment = () => {
       ) : (
         <form onSubmit={handlePayment}>
           <Row className="mb-4">
-            {invoices.map((inv) => (
-              <Col md={4} key={inv.id}>
-                <Card
-                  className={`payment-card ${
-                    selectedInvoices.includes(inv.id) ? "selected" : ""
-                  } ${inv.status === "PAID" ? "disabled" : ""}`}
-                  onClick={() => toggleInvoiceSelection(inv.id)}
-                >
-                  <Card.Body className="text-center">
-                    <Card.Title>Hóa đơn #{inv.id}</Card.Title>
-                    <Card.Text>
-                      {inv.totalAmount.toLocaleString()} VND
-                    </Card.Text>
-                    <div
-                      className={
-                        inv.status === "PAID" ? "text-success" : "text-danger"
-                      }
-                    >
-                      {inv.status === "PAID"
-                        ? "Đã thanh toán"
-                        : "Chưa thanh toán"}
-                    </div>
-                  </Card.Body>
-                </Card>
+            {Array.isArray(invoices) && invoices.length > 0 ? (
+              invoices.map((inv) => (
+                <Col md={4} key={inv.id}>
+                  <Card
+                    className={`payment-card ${
+                      selectedInvoices.includes(inv.id) ? "selected" : ""
+                    } ${inv.status === "PAID" ? "disabled" : ""}`}
+                    onClick={() => toggleInvoiceSelection(inv.id)}
+                  >
+                    <Card.Body className="text-center">
+                      <Card.Title>Hóa đơn #{inv.id}</Card.Title>
+                      <Card.Text>
+                        {inv.totalAmount.toLocaleString()} VND
+                      </Card.Text>
+                      <div
+                        className={
+                          inv.status === "PAID" ? "text-success" : "text-danger"
+                        }
+                      >
+                        {inv.status === "PAID"
+                          ? "Đã thanh toán"
+                          : "Chưa thanh toán"}
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))
+            ) : (
+              <Col>
+                <div className="text-center text-muted">
+                  Không có hóa đơn nào.
+                </div>
               </Col>
-            ))}
+            )}
           </Row>
-
           <h5>Phương thức thanh toán:</h5>
           <Row className="mb-4">
             <Col md={6}>
