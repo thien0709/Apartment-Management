@@ -15,9 +15,9 @@ const Feedback = () => {
   const loadFeedbacks = async () => {
     try {
       const res = await Apis.get(endpoints["feedbacks"](user.user?.id), {
-        headers: {
-          Authorization: `Bearer ${user.user.token}`,
-        },
+        // headers: {
+        //   Authorization: `Bearer ${user.user.token}`,
+        // },
       });
       setFeedbacks(res.data);
     } catch (error) {

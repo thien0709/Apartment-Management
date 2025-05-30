@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./styles/payment.css";
 
 const Payment = () => {
-  const { user, token } = useContext(MyUserContext);
+  const { user, loading } = useContext(MyUserContext);
   const location = useLocation();
   const navigator = useNavigate();
 
@@ -24,11 +24,9 @@ const Payment = () => {
   const fetchInvoices = async () => {
     setIsLoading(true);
     try {
-      const res = await Apis.get(endpoints["invoices"](user?.id), {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log("Fetched invoices:", res.data);
-      setInvoices(Array.isArray(res.data) ? res.data : []);
+      console.log("Fetching invoices for user:", user);
+      const res = await Apis.get(endpoints["invoices"](user?.id));
+      setInvoices(res.data);
     } catch {
       setPaymentStatus({ type: "danger", message: "Lỗi khi tải hóa đơn." });
     } finally {
@@ -46,7 +44,9 @@ const Payment = () => {
         type: "success",
         message: "Thanh toán thành công qua VNPay!",
       });
-      fetchInvoices();
+      if (loading && user?.id) {
+        fetchInvoices();
+      }
     } else if (status === "cancel") {
       setPaymentStatus({
         type: "warning",
@@ -61,10 +61,15 @@ const Payment = () => {
   }, [location.search]);
 
   // Initial fetch
+
   useEffect(() => {
-    if (!user?.id) navigator("/login");
-    if (user?.id) fetchInvoices();
-  }, [user?.id]);
+    if (!loading && !user?.id) {
+      navigator("/login");
+    }
+    if (user?.id) {
+      fetchInvoices();
+    }
+  }, [loading, user?.id]);
 
   const toggleInvoiceSelection = (id) => {
     const invoice = invoices.find((inv) => inv.id === id);
@@ -76,11 +81,9 @@ const Payment = () => {
   };
 
   const calculateTotal = () =>
-    Array.isArray(invoices)
-      ? invoices
-          .filter((inv) => selectedInvoices.includes(inv.id))
-          .reduce((sum, inv) => sum + inv.totalAmount, 0)
-      : 0;
+    invoices
+      .filter((inv) => selectedInvoices.includes(inv.id))
+      .reduce((sum, inv) => sum + inv.totalAmount, 0);
 
   const handlePayment = async (e) => {
     e.preventDefault();
@@ -97,12 +100,11 @@ const Payment = () => {
 
     try {
       if (paymentMethod === "CASH") {
-        const res = await Apis.post(
-          endpoints["payment-vnpay"],
-          { invoiceId: selectedInvoices, amount: totalAmount },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        window.open(res.data, "_blank");
+        const res = await Apis.post(endpoints["payment-vnpay"], {
+          invoiceId: selectedInvoices,
+          amount: totalAmount,
+        });
+        window.location.href = res.data;
         setPaymentStatus({
           type: "success",
           message:
@@ -116,7 +118,6 @@ const Payment = () => {
 
         await Apis.post(endpoints["payment-banking"], formData, {
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
         });
@@ -161,40 +162,32 @@ const Payment = () => {
       ) : (
         <form onSubmit={handlePayment}>
           <Row className="mb-4">
-            {Array.isArray(invoices) && invoices.length > 0 ? (
-              invoices.map((inv) => (
-                <Col md={4} key={inv.id}>
-                  <Card
-                    className={`payment-card ${
-                      selectedInvoices.includes(inv.id) ? "selected" : ""
-                    } ${inv.status === "PAID" ? "disabled" : ""}`}
-                    onClick={() => toggleInvoiceSelection(inv.id)}
-                  >
-                    <Card.Body className="text-center">
-                      <Card.Title>Hóa đơn #{inv.id}</Card.Title>
-                      <Card.Text>
-                        {inv.totalAmount.toLocaleString()} VND
-                      </Card.Text>
-                      <div
-                        className={
-                          inv.status === "PAID" ? "text-success" : "text-danger"
-                        }
-                      >
-                        {inv.status === "PAID"
-                          ? "Đã thanh toán"
-                          : "Chưa thanh toán"}
-                      </div>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              ))
-            ) : (
-              <Col>
-                <div className="text-center text-muted">
-                  Không có hóa đơn nào.
-                </div>
+            {invoices.map((inv) => (
+              <Col md={4} key={inv.id}>
+                <Card
+                  className={`payment-card ${
+                    selectedInvoices.includes(inv.id) ? "selected" : ""
+                  } ${inv.status === "PAID" ? "disabled" : ""}`}
+                  onClick={() => toggleInvoiceSelection(inv.id)}
+                >
+                  <Card.Body className="text-center">
+                    <Card.Title>Hóa đơn #{inv.id}</Card.Title>
+                    <Card.Text>
+                      {inv.totalAmount.toLocaleString()} VND
+                    </Card.Text>
+                    <div
+                      className={
+                        inv.status === "PAID" ? "text-success" : "text-danger"
+                      }
+                    >
+                      {inv.status === "PAID"
+                        ? "Đã thanh toán"
+                        : "Chưa thanh toán"}
+                    </div>
+                  </Card.Body>
+                </Card>
               </Col>
-            )}
+            ))}
           </Row>
 
           <h5>Phương thức thanh toán:</h5>

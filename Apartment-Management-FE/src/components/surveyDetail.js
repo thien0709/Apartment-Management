@@ -12,7 +12,7 @@ const SurveyDetail = () => {
     try {
       const res = await Apis.get(endpoints["survey-detail"](surveyId));
       const question = res.data.map((q) => ({
-        ...q
+        ...q,
       }));
       setQuestions(question);
     } catch (err) {
@@ -26,9 +26,7 @@ const SurveyDetail = () => {
 
   const onChangeAnswer = (questionId, answer) => {
     setQuestions((prev) =>
-      prev.map((q) =>
-        q.id === questionId ? { ...q, answer: answer.trim() } : q
-      )
+      prev.map((q) => (q.id === questionId ? { ...q, answer } : q))
     );
   };
 
@@ -61,8 +59,14 @@ const SurveyDetail = () => {
         )}
 
         {questions.map((question, index) => (
-          <div key={question.id} className="mb-4 p-4 bg-light rounded shadow-sm border">
-            <label htmlFor={`answer-${question.id}`} className="form-label fw-semibold">
+          <div
+            key={question.id}
+            className="mb-4 p-4 bg-light rounded shadow-sm border"
+          >
+            <label
+              htmlFor={`answer-${question.id}`}
+              className="form-label fw-semibold"
+            >
               {index + 1}. {question.content}
             </label>
             <textarea
