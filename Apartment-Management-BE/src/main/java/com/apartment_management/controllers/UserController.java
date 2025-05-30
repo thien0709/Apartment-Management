@@ -127,10 +127,13 @@ public class UserController {
             @RequestParam("email") String email,
             @RequestParam("role") String role,
             @RequestParam(value = "roomId", required = false) Integer roomId,
-            HttpSession session
+            @RequestParam(value = "floorId", required = false) Integer floorId, // thêm nếu cần
+            HttpSession session,
+            Model model // Thêm model để truyền lỗi
     ) {
         System.out.println("Processing /register POST with username: " + username);
-        // Lưu trạng thái form vào session
+
+        // Lưu lại thông tin form để hiển thị lại nếu có lỗi
         Map<String, String> formData = new HashMap<>();
         formData.put("username", username);
         formData.put("fullName", fullName);
@@ -139,7 +142,13 @@ public class UserController {
         formData.put("role", role);
         session.setAttribute("registerFormData", formData);
 
-        // Xử lý đăng ký
+        // Kiểm tra username đã tồn tại chưa
+        if (this.userSer.getUserByUserName(username) != null) {
+            model.addAttribute("errorMsg", "Tên người dùng đã tồn tại!");
+            return register(floorId, session, model); // Gọi lại form với dữ liệu và thông báo lỗi
+        }
+
+        // Nếu chưa tồn tại, tiếp tục đăng ký
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
@@ -176,6 +185,7 @@ public class UserController {
         }
         return "Không thể xóa";
     }
+
     @PostMapping("/manage-user/block-user/{id}")
     public String blockUser(@PathVariable("id") int id) {
         User temp = userSer.blockUser(id);

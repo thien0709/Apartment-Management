@@ -62,9 +62,9 @@ const Payment = () => {
 
   // Initial fetch
   useEffect(() => {
-    if (!user?.id) navigator("/login");
-    if (user?.id) fetchInvoices();
-  }, [user?.id]);
+    if (!user?.user.id) navigator("/login");
+    if (user?.user.id) fetchInvoices();
+  }, [user?.user.id]);
 
   const toggleInvoiceSelection = (id) => {
     const invoice = invoices.find((inv) => inv.id === id);
