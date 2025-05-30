@@ -48,7 +48,7 @@ function ChangePassword({ userId: propUserId, token }) {
             setVariant('success');
             setOldPassword('');
             setNewPassword('');
-            navigator("/update-avatar");
+            navigator("/");
         } catch (error) {
             setMessage(error.response?.data?.error || 'Đổi mật khẩu thất bại!');
             setVariant('danger');
