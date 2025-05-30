@@ -101,9 +101,6 @@ const Feedback = () => {
     }
   };
 
-    const handleContentChange = debounce((value) => {
-        setContent(value);
-    }, 300);
 
   return (
     <div className="container py-5">
@@ -121,7 +118,7 @@ const Feedback = () => {
                     className="form-control"
                     rows="5"
                     value={content}
-                    onChange={(e) => handleContentChange(e.target.value)}
+                    onChange={(e) => setContent(e.target.value)}
                     placeholder="Nội dung phản ánh"
                     style={{ height: "150px" }}
                     required
