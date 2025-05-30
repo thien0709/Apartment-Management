@@ -27,26 +27,6 @@ function App() {
 }
 
 function AppRoutes() {
-  const dispatch = useContext(MyDispatcherContext);
-
-  useEffect(() => {
-    const autoLogin = async () => {
-      const token = cookie.load("token");
-      if (token) {
-        try {
-          const res = await Apis.get(endpoints["current-user"], {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          dispatch({ type: "login", payload: res.data });
-        } catch (err) {
-          cookie.remove("token");
-          console.error("Auto login failed:", err);
-        }
-      }
-    };
-    autoLogin();
-  }, [dispatch]);
-
   return (
     <BrowserRouter>
       <Sidebar />
