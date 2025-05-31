@@ -8,6 +8,9 @@ import com.apartment_management.pojo.DetailInvoice;
 import com.apartment_management.pojo.Feed;
 import com.apartment_management.pojo.Invoice;
 import com.apartment_management.repositories.InvoiceRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import java.math.BigDecimal;
 import java.util.List;
 import org.hibernate.Session;
@@ -40,9 +43,15 @@ public class InvoiceRepositoryImpl implements InvoiceRepository {
 
     @Override
     public List<Invoice> findAll() {
-        return getCurrentSession()
-                .createNamedQuery("Invoice.findAll", Invoice.class)
-                .getResultList();
+        Session session = getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Invoice> cq = cb.createQuery(Invoice.class);
+        Root<Invoice> root = cq.from(Invoice.class);
+
+        // Điều kiện: userId IS NOT NULL
+        cq.select(root).where(cb.isNotNull(root.get("userId")));
+
+        return session.createQuery(cq).getResultList();
     }
 
     @Override
@@ -85,20 +94,19 @@ public class InvoiceRepositoryImpl implements InvoiceRepository {
 //        return true;
 //
 //    }
-
     @Override
     public boolean updatePaymentInfo(Invoice invoice, String method, String paymentProofUrl) {
-         if (invoice == null || invoice.getId() == null) {
+        if (invoice == null || invoice.getId() == null) {
             return false;
         }
         invoice.setPaymentMethod(method);
         invoice.setStatus("PAID");
-        if(paymentProofUrl != null){
+        if (paymentProofUrl != null) {
             invoice.setPaymentProof(paymentProofUrl);
         }
-        
+
         getCurrentSession().merge(invoice);
         return true;
-        }
+    }
 
 }

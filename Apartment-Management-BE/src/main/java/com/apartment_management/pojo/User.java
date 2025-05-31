@@ -103,7 +103,7 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "adminId",cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Survey> surveySet;
-    @OneToMany(mappedBy = "userId" ,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userId" ,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnore
     private Set<Invoice> invoiceSet;
     @JoinColumn(name = "room_id", referencedColumnName = "id")
