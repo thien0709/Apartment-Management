@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thống kê người dùng</title>
+    <th:block th:replace="base :: bootstrap"></th:block>
+    <script th:src="@{https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js}"></script>
+    <style>
+        .chart-container {
+            margin-top: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .error {
+            color: red;
+        }
+        .controls {
+            margin-bottom: 1rem;
+        }
+        .btn-group {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+
+    <main class="container mt-4">
+        <h2 class="mb-4">Thống kê người dùng</h2>
+
+        <!-- Hiển thị thông báo lỗi -->
+        <div th:if="${error}" class="alert alert-danger error" th:text="${error}"></div>
+
+        <!-- Điều khiển -->
+        <div th:if="${error == null}" class="controls">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-primary" onclick="loadChart('month')">Theo tháng</button>
+                <button type="button" class="btn btn-primary" onclick="loadChart('quarter')">Theo quý</button>
+                <button type="button" class="btn btn-primary" onclick="loadChart('year')">Theo năm</button>
+            </div>
+            <div class="form-group">
+                <label for="year">Chọn năm:</label>
+                <select id="year" class="form-control d-inline w-auto" onchange="loadChart(currentPeriod)">
+                    <option th:each="y : ${#numbers.sequence(2020, 2025)}" th:value="${y}" th:text="${y}" th:selected="${y == 2025}"></option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Biểu đồ -->
+        <div th:if="${error == null}" class="chart-container">
+            <canvas id="userChart"></canvas>
+        </div>
+    </main>
+
+    <div th:replace="base :: footer"></div>
+
+    <script>
+        let userChart;
+        let currentPeriod = 'month';
+
+        function loadChart(period) {
+            console.log('Loading chart for period:', period);
+            currentPeriod = period;
+            const year = document.getElementById('year') ? document.getElementById('year').value : '2025';
+            console.log('Year:', year);
+            const labels = period === 'month' ? ['Th1', 'Th2', 'Th3', 'Th4', 'Th5', 'Th6', 'Th7', 'Th8', 'Th9', 'Th10', 'Th11', 'Th12'] :
+                           period === 'quarter' ? ['Q1', 'Q2', 'Q3', 'Q4'] :
+                           ['2020', '2021', '2022', '2023', '2024', '2025'];
+
+            fetch(`/apartment_management/api/statistics/users?period=${period}&year=${year}`, {
+                headers: {
+                    'Accept': 'application/json'
+                },
+                credentials: 'include'
+            })
+            .then(response => {
+                console.log('API response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('API data:', data);
+                const dataPoints = period === 'month' ? Array(12).fill(0) :
+                                  period === 'quarter' ? Array(4).fill(0) :
+                                  Array(labels.length).fill(0);
+
+                Object.keys(data).forEach(key => {
+                    const index = period === 'year' ? labels.indexOf(key) : parseInt(key) - 1;
+                    if (index >= 0 && index < dataPoints.length) {
+                        dataPoints[index] = data[key];
+                    }
+                });
+
+                if (userChart) {
+                    userChart.destroy();
+                }
+
+                const ctx = document.getElementById('userChart').getContext('2d');
+                userChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Số lượng người dùng đăng ký',
+                            data: dataPoints,
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Số lượng người dùng'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: period === 'month' ? 'Tháng' : period === 'quarter' ? 'Quý' : 'Năm'
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Không thể tải dữ liệu thống kê: ' + error.message);
+            });
+        }
+
+        // Load initial chart
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Page loaded, initializing chart');
+            if (document.getElementById('userChart')) {
+                loadChart('month');
+            }
+        });
+    </script>
+</body>
+</html>

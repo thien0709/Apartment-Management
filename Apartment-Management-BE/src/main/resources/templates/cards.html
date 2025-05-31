@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách thẻ xe</title>
+    <th:block th:replace="base :: bootstrap"></th:block>
+    <style>
+        .table-container {
+            margin-top: 2rem;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+        .card-form {
+            margin-bottom: 2rem;
+        }
+        .delete-btn {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+
+    <main class="container mt-4">
+        <h2 class="mb-4">Danh sách tất cả thẻ xe</h2>
+
+        <!-- Hiển thị thông báo -->
+        <div th:if="${success}" class="alert alert-success success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger error" th:text="${error}"></div>
+
+        <!-- Form thêm thẻ xe -->
+        <div class="card-form">
+            <h4>Thêm thẻ xe mới</h4>
+            <form th:action="@{/card/add}" th:object="${newCard}" method="post">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="holderName" class="form-label">Tên người giữ thẻ</label>
+                        <input type="text" class="form-control" id="holderName" th:field="*{holderName}" required />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="relationship" class="form-label">Quan hệ với chủ hộ</label>
+                        <input type="text" class="form-control" id="relationship" th:field="*{relationship}" required />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="userId" class="form-label">Chủ thẻ</label>
+                        <select class="form-control" id="userId" th:field="*{userId.id}" required>
+                            <option value="">Chọn người dùng</option>
+                            <option th:each="user : ${users}" 
+                                    th:value="${user.id}" 
+                                    th:text="${user.fullName} + ' (' + ${user.username} + ')'">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Thêm thẻ xe</button>
+            </form>
+        </div>
+
+        <!-- Bảng danh sách thẻ xe -->
+        <div class="table-container">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Chủ thẻ</th>
+                        <th>Tên người giữ thẻ</th>
+                        <th>Quan hệ</th>
+                        <th>Ngày cấp</th>
+                        <th>Ngày hết hạn</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="card : ${cards}">
+                        <td th:text="${card.userId.fullName} + ' (' + ${card.userId.username} + ')'"></td>
+                        <td th:text="${card.holderName}"></td>
+                        <td th:text="${card.relationship} ?: 'Chưa rõ'"></td>
+                        <td th:text="${#dates.format(card.issueDate, 'dd/MM/yyyy')}"></td>
+                        <td th:text="${#dates.format(card.expirationDate, 'dd/MM/yyyy')}"></td>
+                        <td>
+                            <span th:class="${card.status == 'active'} ? 'badge bg-success' : 'badge bg-secondary'"
+                                  th:text="${card.status}"></span>
+                        </td>
+                        <td>
+                            <a th:href="@{/card/delete/{id}(id=${card.id})}"
+                               class="btn btn-danger btn-sm delete-btn"
+                               onclick="return confirm('Bạn có chắc muốn xóa thẻ xe này?')">Xóa</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${cards.empty}">
+                        <td colspan="7" class="text-center">Không có thẻ xe nào.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div th:replace="base :: footer"></div>
+</body>
+</html>
