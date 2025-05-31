@@ -36,7 +36,7 @@ public class Locker implements Serializable {
     @NotNull
     @Column(name = "id")
     private Integer id;
-    @OneToMany(mappedBy = "lockerId")
+    @OneToMany(mappedBy = "lockerId", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Package> packageSet;
     @JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)
