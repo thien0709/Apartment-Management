@@ -6,6 +6,7 @@ package com.apartment_management.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -55,7 +56,7 @@ public class Survey implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @JsonIgnore
-    @OneToMany(mappedBy = "surveyId")
+    @OneToMany(mappedBy = "surveyId", cascade = CascadeType.ALL)
     private Set<Question> questionSet;
     @JoinColumn(name = "admin_id", referencedColumnName = "id")
     @ManyToOne

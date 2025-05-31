@@ -6,6 +6,7 @@ package com.apartment_management.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -50,7 +51,7 @@ public class Question implements Serializable {
     @ManyToOne
     private Survey surveyId;
     @JsonIgnore
-    @OneToMany(mappedBy = "questionId")
+    @OneToMany(mappedBy = "questionId" , cascade = CascadeType.ALL)
     private Set<Response> responseSet;
 
     public Question() {
