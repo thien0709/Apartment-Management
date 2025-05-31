@@ -94,13 +94,13 @@ public class User implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     @JsonIgnore
     private Locker locker;
-    @OneToMany(mappedBy = "userId")
+    @OneToMany(mappedBy = "userId" ,cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Feedback> feedbackSet;
-    @OneToMany(mappedBy = "userId")
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Response> responseSet;
-    @OneToMany(mappedBy = "adminId")
+    @OneToMany(mappedBy = "adminId",cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Survey> surveySet;
     @OneToMany(mappedBy = "userId" ,cascade = CascadeType.ALL)
