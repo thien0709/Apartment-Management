@@ -6,6 +6,7 @@ package com.apartment_management.repositories.impl;
 
 import com.apartment_management.pojo.User;
 import com.apartment_management.repositories.UserRepository;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -39,7 +40,11 @@ public class UserRepositoryImpl implements UserRepository {
         Session s = this.factory.getObject().getCurrentSession();
         Query q = s.createNamedQuery("User.findByUsername", User.class);
         q.setParameter("username", username);
-        return (User) q.getSingleResult();
+        try {
+            return (User) q.getSingleResult();
+        } catch (NoResultException ex) {
+            return null; 
+        }
 
     }
 
@@ -69,7 +74,7 @@ public class UserRepositoryImpl implements UserRepository {
         q.setParameter("username", username);
         User u = (User) q.getSingleResult();
 
-        if (u != null && u.getRole().equals("RESIDENT") && u.getIsActive()==true && this.passwordEncoder.matches(password, u.getPassword())) {
+        if (u != null && u.getRole().equals("RESIDENT") && u.getIsActive() == true && this.passwordEncoder.matches(password, u.getPassword())) {
             return u;
         } else {
             return null; // Nếu đăng nhập thất bại, trả về null
@@ -112,7 +117,7 @@ public class UserRepositoryImpl implements UserRepository {
             }
             String roomNumber = params.get("room_number");
             if (roomNumber != null && !roomNumber.isEmpty()) {
-                predicates.add(b.like(root.get("roomId").get("roomNumber"), String.format("%%%s%%", kw)));
+                predicates.add(b.like(root.get("roomId").get("roomNumber"), String.format("%%%s%%", roomNumber)));
             }
             q.where(predicates.toArray(Predicate[]::new));
 
@@ -124,7 +129,6 @@ public class UserRepositoryImpl implements UserRepository {
 
         Query query = s.createQuery(q);
         return query.getResultList();
-
     }
 
     @Override
@@ -145,7 +149,7 @@ public class UserRepositoryImpl implements UserRepository {
         query.setParameter("role", role);
         return query.getResultList();
     }
-    
+
     @Override
     public List<Object[]> getUserStatsByPeriod(String period, int year) {
         Session session = factory.getObject().getCurrentSession();

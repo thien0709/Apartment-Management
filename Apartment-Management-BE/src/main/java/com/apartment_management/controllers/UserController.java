@@ -146,27 +146,28 @@ public class UserController {
         if (this.userSer.getUserByUserName(username) != null) {
             model.addAttribute("errorMsg", "Tên người dùng đã tồn tại!");
             return register(floorId, session, model); // Gọi lại form với dữ liệu và thông báo lỗi
+        } else {
+
+            // Nếu chưa tồn tại, tiếp tục đăng ký
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(password);
+            user.setFullName(fullName);
+            user.setPhone(phone);
+            user.setEmail(email);
+            user.setRole(role.toUpperCase());
+
+            if ("RESIDENT".equalsIgnoreCase(role) && roomId != null) {
+                Room room = roomService.getRoomById(roomId);
+                user.setRoomId(room);
+            }
+
+            userSer.addUser(user);
+
+            // Xóa trạng thái form sau khi đăng ký thành công
+            session.removeAttribute("registerFormData");
+            return "redirect:/manage-user";
         }
-
-        // Nếu chưa tồn tại, tiếp tục đăng ký
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setFullName(fullName);
-        user.setPhone(phone);
-        user.setEmail(email);
-        user.setRole(role.toUpperCase());
-
-        if ("RESIDENT".equalsIgnoreCase(role) && roomId != null) {
-            Room room = roomService.getRoomById(roomId);
-            user.setRoomId(room);
-        }
-
-        userSer.addUser(user);
-
-        // Xóa trạng thái form sau khi đăng ký thành công
-        session.removeAttribute("registerFormData");
-        return "redirect:/manage-user";
     }
 
     @GetMapping("/manage-user")
